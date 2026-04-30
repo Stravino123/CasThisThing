@@ -19,7 +19,7 @@ enum Format {
     }()
 
     static func grams(_ value: Double?) -> String {
-        guard let v = value, let s = grams.string(from: NSNumber(value: v)) else { return "—" }
+        guard let v = value, let s = grams.string(from: NSNumber(value: v)) else { return "— g" }
         return "\(s) g"
     }
 
