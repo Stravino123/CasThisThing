@@ -102,9 +102,3 @@ struct StepDots: View {
         }
     }
 }
-
-// Stub — replaced in Task 6
-struct SessionDetailView: View {
-    @Bindable var session: CastingSession
-    var body: some View { Text(session.title) }
-}
