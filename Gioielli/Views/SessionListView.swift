@@ -5,8 +5,6 @@ struct SessionListView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \CastingSession.date, order: .reverse) private var sessions: [CastingSession]
 
-    @State private var showingNewSession = false
-
     private var inProgress: [CastingSession] { sessions.filter { !$0.isComplete } }
     private var completed: [CastingSession]  { sessions.filter {  $0.isComplete } }
 
@@ -74,7 +72,7 @@ private struct SessionRow: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                StepDots(current: session.currentStep, isComplete: session.isComplete)
+                StepDots(current: session.currentStep)
                 if session.isComplete, let cost = session.totalCost {
                     Text(Format.euros(cost))
                         .font(.subheadline.monospacedDigit())
@@ -93,7 +91,6 @@ private struct SessionRow: View {
 
 struct StepDots: View {
     let current: Int
-    let isComplete: Bool
 
     var body: some View {
         HStack(spacing: 4) {
