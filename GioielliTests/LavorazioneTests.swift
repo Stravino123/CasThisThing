@@ -32,6 +32,14 @@ final class LavorazioneTests: XCTestCase {
         XCTAssertNil(l.cost)
     }
 
+    func testCost_nilWhenSilverCostMissing() {
+        let s = makeSession(silverCost: nil, castingCost: 80)
+        let l = Lavorazione(label: "A", session: s)
+        l.silverWeight = 14.2
+        container.mainContext.insert(l)
+        XCTAssertNil(l.cost)
+    }
+
     func testCost_nilWhenNoSilverWeight() {
         let s = makeSession(silverCost: 100, castingCost: 80)
         let l = Lavorazione(label: "A", session: s)
@@ -47,8 +55,9 @@ final class LavorazioneTests: XCTestCase {
         container.mainContext.insert(l1)
         container.mainContext.insert(l2)
         container.mainContext.insert(l3)
-        let expected = (14.2 / 44.0) * 247.0
-        XCTAssertEqual(l1.cost!, expected, accuracy: 0.001)
+        XCTAssertEqual(l1.cost!, (14.2 / 44.0) * 247.0, accuracy: 0.001)
+        XCTAssertEqual(l2.cost!, (19.8 / 44.0) * 247.0, accuracy: 0.001)
+        XCTAssertEqual(l3.cost!, (10.0 / 44.0) * 247.0, accuracy: 0.001)
     }
 
     func testCost_nilWhenTotalSilverWeightIsZero() {
