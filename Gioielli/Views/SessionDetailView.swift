@@ -30,7 +30,10 @@ struct SessionDetailView: View {
         }
         .alert("Rinomina sessione", isPresented: $isEditingTitle) {
             TextField("Titolo", text: $draftTitle)
-            Button("Salva") { session.title = draftTitle }
+            Button("Salva") {
+                let trimmed = draftTitle.trimmingCharacters(in: .whitespaces)
+                if !trimmed.isEmpty { session.title = trimmed }
+            }
             Button("Annulla", role: .cancel) {}
         }
         .sheet(isPresented: $showingAddLavorazione) {
@@ -246,6 +249,14 @@ private struct DoubleFieldRow: View {
     @State private var text: String = ""
     @FocusState private var focused: Bool
 
+    private static let inputFormatter: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.maximumFractionDigits = 4
+        f.locale = Locale.current
+        return f
+    }()
+
     var body: some View {
         HStack {
             Text(label)
@@ -255,10 +266,16 @@ private struct DoubleFieldRow: View {
                 .multilineTextAlignment(.trailing)
                 .focused($focused)
                 .frame(width: 100)
+                .toolbar {
+                    ToolbarItemGroup(placement: .keyboard) {
+                        Spacer()
+                        Button("Fine") { focused = false }
+                    }
+                }
             Text(unit).foregroundStyle(.secondary)
         }
         .onAppear {
-            if let v = value { text = Format.grams.string(from: NSNumber(value: v)) ?? "" }
+            if let v = value { text = DoubleFieldRow.inputFormatter.string(from: NSNumber(value: v)) ?? "" }
         }
         .onChange(of: text) { _, newVal in
             value = Double(newVal.replacingOccurrences(of: ",", with: "."))
