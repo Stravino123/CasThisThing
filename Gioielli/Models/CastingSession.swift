@@ -43,18 +43,3 @@ final class CastingSession: Identifiable {
         return 1
     }
 }
-
-// Stub — will be replaced fully in Task 2.
-@Model
-final class Lavorazione {
-    var label: String
-    var waxWeight: Double?
-    var silverWeight: Double?
-
-    @Relationship var session: CastingSession?
-
-    init(label: String, session: CastingSession?) {
-        self.label = label
-        self.session = session
-    }
-}
