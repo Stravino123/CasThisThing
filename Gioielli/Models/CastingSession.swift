@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class CastingSession {
+final class CastingSession: Identifiable {
     var id: UUID
     var title: String
     var date: Date

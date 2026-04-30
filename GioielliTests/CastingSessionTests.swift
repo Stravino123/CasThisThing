@@ -16,7 +16,7 @@ final class CastingSessionTests: XCTestCase {
         container = nil
     }
 
-    func testCurrentStep_allNil_is1() throws {
+    func testCurrentStep_allNil_is1() {
         let s = CastingSession(title: "Test", date: .now)
         XCTAssertEqual(s.currentStep, 1)
     }
@@ -66,6 +66,14 @@ final class CastingSessionTests: XCTestCase {
         XCTAssertEqual(s.totalCost, 180)
     }
 
+    func testTotalCost_doesNotIncludeWaxWeight() {
+        let s = CastingSession(title: "T", date: .now)
+        s.waxWeight = 999
+        s.silverCost = 100
+        s.castingCost = 80
+        XCTAssertEqual(s.totalCost, 180)
+    }
+
     func testTotalSilverWeight_sumOfNonNilWeights() throws {
         let s = CastingSession(title: "T", date: .now)
         container.mainContext.insert(s)
@@ -78,7 +86,7 @@ final class CastingSessionTests: XCTestCase {
         XCTAssertEqual(s.totalSilverWeight, 34.0, accuracy: 0.001)
     }
 
-    func testTotalSilverWeight_zeroWhenNoWeights() throws {
+    func testTotalSilverWeight_zeroWhenNoWeights() {
         let s = CastingSession(title: "T", date: .now)
         container.mainContext.insert(s)
         XCTAssertEqual(s.totalSilverWeight, 0)
