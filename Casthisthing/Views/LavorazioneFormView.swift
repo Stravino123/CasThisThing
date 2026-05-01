@@ -23,19 +23,16 @@ struct LavorazioneFormView: View {
     var body: some View {
         NavigationStack {
             Form {
-                // Phase indicator — shows where we are in the 4-step workflow
                 Section {
                     SessionPhaseIndicator(session: session)
                 }
 
-                // Label — always editable
                 Section {
                     TextField("Nome (es. anello per mamma)", text: $label)
                 } header: {
                     Text("Nome")
                 }
 
-                // ② Silver weight — locked until session is complete
                 Section {
                     if silverFieldUnlocked {
                         HStack {
@@ -63,7 +60,6 @@ struct LavorazioneFormView: View {
                     Text("② Argento · dopo il ritiro")
                 }
 
-                // Photo attachment
                 Section("Foto") {
                     if let img = photoImage {
                         Image(uiImage: img)
@@ -85,7 +81,6 @@ struct LavorazioneFormView: View {
                     }
                 }
 
-                // Cost preview — read-only, shown only when available
                 Section {
                     HStack {
                         Text("Costo lavorazione")
@@ -102,7 +97,6 @@ struct LavorazioneFormView: View {
                     Text("③ ④ · costo proporzionale")
                 }
 
-                // Delete — editing only
                 if isEditing {
                     Section {
                         Button("Elimina lavorazione", role: .destructive) {
@@ -127,8 +121,9 @@ struct LavorazioneFormView: View {
             }
             .onAppear { populateFields() }
             .onChange(of: selectedPhotoItem) { _, newItem in
+                guard let newItem else { return }
                 Task {
-                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    if let data = try? await newItem.loadTransferable(type: Data.self) {
                         photoImage = UIImage(data: data)
                     }
                 }

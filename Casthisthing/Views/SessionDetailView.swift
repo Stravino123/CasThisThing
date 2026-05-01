@@ -207,6 +207,7 @@ private struct StepRowLabel: View {
 private struct LavorazioneRow: View {
     let lav: Lavorazione
     let sessionComplete: Bool
+    @State private var thumbnail: UIImage?
 
     var body: some View {
         HStack {
@@ -232,7 +233,7 @@ private struct LavorazioneRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.tertiary)
             }
-            if let data = lav.photoData, let img = UIImage(data: data) {
+            if let img = thumbnail {
                 Image(uiImage: img)
                     .resizable()
                     .scaledToFill()
@@ -242,6 +243,11 @@ private struct LavorazioneRow: View {
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
+        }
+        .onAppear {
+            if thumbnail == nil, let data = lav.photoData {
+                thumbnail = UIImage(data: data)
+            }
         }
     }
 }
