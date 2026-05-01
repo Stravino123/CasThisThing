@@ -12,37 +12,37 @@
 			containerPortal = FF56D5252FA3B948004DC0AA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = FF56D52C2FA3B948004DC0AA;
-			remoteInfo = Gioielli;
+			remoteInfo = Casthisthing;
 		};
 		FF56D5472FA3B94D004DC0AA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FF56D5252FA3B948004DC0AA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = FF56D52C2FA3B948004DC0AA;
-			remoteInfo = Gioielli;
+			remoteInfo = Casthisthing;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FF56D52D2FA3B948004DC0AA /* Gioielli.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gioielli.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FF56D53C2FA3B94D004DC0AA /* GioielliTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GioielliTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		FF56D5462FA3B94D004DC0AA /* GioielliUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GioielliUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF56D52D2FA3B948004DC0AA /* Casthisthing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Casthisthing.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF56D53C2FA3B94D004DC0AA /* CasthisthingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CasthisthingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF56D5462FA3B94D004DC0AA /* CasthisthingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CasthisthingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		FF56D52F2FA3B948004DC0AA /* Gioielli */ = {
+		FF56D52F2FA3B948004DC0AA /* Casthisthing */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Gioielli;
+			path = Casthisthing;
 			sourceTree = "<group>";
 		};
-		FF56D53F2FA3B94D004DC0AA /* GioielliTests */ = {
+		FF56D53F2FA3B94D004DC0AA /* CasthisthingTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = GioielliTests;
+			path = CasthisthingTests;
 			sourceTree = "<group>";
 		};
-		FF56D5492FA3B94D004DC0AA /* GioielliUITests */ = {
+		FF56D5492FA3B94D004DC0AA /* CasthisthingUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = GioielliUITests;
+			path = CasthisthingUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,9 +75,9 @@
 		FF56D5242FA3B948004DC0AA = {
 			isa = PBXGroup;
 			children = (
-				FF56D52F2FA3B948004DC0AA /* Gioielli */,
-				FF56D53F2FA3B94D004DC0AA /* GioielliTests */,
-				FF56D5492FA3B94D004DC0AA /* GioielliUITests */,
+				FF56D52F2FA3B948004DC0AA /* Casthisthing */,
+				FF56D53F2FA3B94D004DC0AA /* CasthisthingTests */,
+				FF56D5492FA3B94D004DC0AA /* CasthisthingUITests */,
 				FF56D52E2FA3B948004DC0AA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,9 +85,9 @@
 		FF56D52E2FA3B948004DC0AA /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FF56D52D2FA3B948004DC0AA /* Gioielli.app */,
-				FF56D53C2FA3B94D004DC0AA /* GioielliTests.xctest */,
-				FF56D5462FA3B94D004DC0AA /* GioielliUITests.xctest */,
+				FF56D52D2FA3B948004DC0AA /* Casthisthing.app */,
+				FF56D53C2FA3B94D004DC0AA /* CasthisthingTests.xctest */,
+				FF56D5462FA3B94D004DC0AA /* CasthisthingUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FF56D52C2FA3B948004DC0AA /* Gioielli */ = {
+		FF56D52C2FA3B948004DC0AA /* Casthisthing */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FF56D5502FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "Gioielli" */;
+			buildConfigurationList = FF56D5502FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "Casthisthing" */;
 			buildPhases = (
 				FF56D5292FA3B948004DC0AA /* Sources */,
 				FF56D52A2FA3B948004DC0AA /* Frameworks */,
@@ -108,18 +108,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				FF56D52F2FA3B948004DC0AA /* Gioielli */,
+				FF56D52F2FA3B948004DC0AA /* Casthisthing */,
 			);
-			name = Gioielli;
+			name = Casthisthing;
 			packageProductDependencies = (
 			);
-			productName = Gioielli;
-			productReference = FF56D52D2FA3B948004DC0AA /* Gioielli.app */;
+			productName = Casthisthing;
+			productReference = FF56D52D2FA3B948004DC0AA /* Casthisthing.app */;
 			productType = "com.apple.product-type.application";
 		};
-		FF56D53B2FA3B94D004DC0AA /* GioielliTests */ = {
+		FF56D53B2FA3B94D004DC0AA /* CasthisthingTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FF56D5532FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "GioielliTests" */;
+			buildConfigurationList = FF56D5532FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "CasthisthingTests" */;
 			buildPhases = (
 				FF56D5382FA3B94D004DC0AA /* Sources */,
 				FF56D5392FA3B94D004DC0AA /* Frameworks */,
@@ -131,18 +131,18 @@
 				FF56D53E2FA3B94D004DC0AA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				FF56D53F2FA3B94D004DC0AA /* GioielliTests */,
+				FF56D53F2FA3B94D004DC0AA /* CasthisthingTests */,
 			);
-			name = GioielliTests;
+			name = CasthisthingTests;
 			packageProductDependencies = (
 			);
-			productName = GioielliTests;
-			productReference = FF56D53C2FA3B94D004DC0AA /* GioielliTests.xctest */;
+			productName = CasthisthingTests;
+			productReference = FF56D53C2FA3B94D004DC0AA /* CasthisthingTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		FF56D5452FA3B94D004DC0AA /* GioielliUITests */ = {
+		FF56D5452FA3B94D004DC0AA /* CasthisthingUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FF56D5562FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "GioielliUITests" */;
+			buildConfigurationList = FF56D5562FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "CasthisthingUITests" */;
 			buildPhases = (
 				FF56D5422FA3B94D004DC0AA /* Sources */,
 				FF56D5432FA3B94D004DC0AA /* Frameworks */,
@@ -154,13 +154,13 @@
 				FF56D5482FA3B94D004DC0AA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				FF56D5492FA3B94D004DC0AA /* GioielliUITests */,
+				FF56D5492FA3B94D004DC0AA /* CasthisthingUITests */,
 			);
-			name = GioielliUITests;
+			name = CasthisthingUITests;
 			packageProductDependencies = (
 			);
-			productName = GioielliUITests;
-			productReference = FF56D5462FA3B94D004DC0AA /* GioielliUITests.xctest */;
+			productName = CasthisthingUITests;
+			productReference = FF56D5462FA3B94D004DC0AA /* CasthisthingUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FF56D52C2FA3B948004DC0AA /* Gioielli */,
-				FF56D53B2FA3B94D004DC0AA /* GioielliTests */,
-				FF56D5452FA3B94D004DC0AA /* GioielliUITests */,
+				FF56D52C2FA3B948004DC0AA /* Casthisthing */,
+				FF56D53B2FA3B94D004DC0AA /* CasthisthingTests */,
+				FF56D5452FA3B94D004DC0AA /* CasthisthingUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		FF56D53E2FA3B94D004DC0AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FF56D52C2FA3B948004DC0AA /* Gioielli */;
+			target = FF56D52C2FA3B948004DC0AA /* Casthisthing */;
 			targetProxy = FF56D53D2FA3B94D004DC0AA /* PBXContainerItemProxy */;
 		};
 		FF56D5482FA3B94D004DC0AA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FF56D52C2FA3B948004DC0AA /* Gioielli */;
+			target = FF56D52C2FA3B948004DC0AA /* Casthisthing */;
 			targetProxy = FF56D5472FA3B94D004DC0AA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -409,7 +409,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.Gioielli;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.Casthisthing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -451,7 +451,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.Gioielli;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.Casthisthing;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -477,7 +477,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.GioielliTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.CasthisthingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -487,7 +487,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Gioielli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Gioielli";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Casthisthing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Casthisthing";
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Debug;
@@ -502,7 +502,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.GioielliTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.CasthisthingTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -512,7 +512,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Gioielli.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Gioielli";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Casthisthing.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Casthisthing";
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Release;
@@ -526,7 +526,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.GioielliUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.CasthisthingUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -536,7 +536,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Gioielli;
+				TEST_TARGET_NAME = Casthisthing;
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Debug;
@@ -550,7 +550,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
 				MACOSX_DEPLOYMENT_TARGET = 26.2;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Test.GioielliUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.stravino.CasthisthingUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
@@ -560,7 +560,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Gioielli;
+				TEST_TARGET_NAME = Casthisthing;
 				XROS_DEPLOYMENT_TARGET = 26.4;
 			};
 			name = Release;
@@ -577,7 +577,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FF56D5502FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "Gioielli" */ = {
+		FF56D5502FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "Casthisthing" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FF56D5512FA3B94D004DC0AA /* Debug */,
@@ -586,7 +586,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FF56D5532FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "GioielliTests" */ = {
+		FF56D5532FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "CasthisthingTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FF56D5542FA3B94D004DC0AA /* Debug */,
@@ -595,7 +595,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FF56D5562FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "GioielliUITests" */ = {
+		FF56D5562FA3B94D004DC0AA /* Build configuration list for PBXNativeTarget "CasthisthingUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FF56D5572FA3B94D004DC0AA /* Debug */,

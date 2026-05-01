@@ -1,6 +1,6 @@
 import XCTest
 import SwiftData
-@testable import Gioielli
+@testable import Casthisthing
 
 @MainActor
 final class LavorazioneTests: XCTestCase {

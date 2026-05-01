@@ -262,16 +262,18 @@ private struct DoubleFieldRow: View {
             Text(label)
             Spacer()
             TextField("0", text: $text)
-                .keyboardType(.decimalPad)
+                .decimalKeyboard()
                 .multilineTextAlignment(.trailing)
                 .focused($focused)
                 .frame(width: 100)
+                #if os(iOS)
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
                         Button("Fine") { focused = false }
                     }
                 }
+                #endif
             Text(unit).foregroundStyle(.secondary)
         }
         .onAppear {

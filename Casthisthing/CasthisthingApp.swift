@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct GioielliApp: App {
+struct CasthisthingApp: App {
     var body: some Scene {
         WindowGroup {
             SessionListView()
