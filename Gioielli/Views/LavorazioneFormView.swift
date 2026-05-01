@@ -80,7 +80,7 @@ struct LavorazioneFormView: View {
                             Text(Format.euros(cost))
                                 .fontWeight(.semibold)
                         } else {
-                            Text("— € (calcolato a step 4)")
+                            Text(session.isComplete ? "— € (inserire peso argento)" : "— € (calcolato a step 4)")
                                 .foregroundStyle(.tertiary)
                         }
                     }
@@ -126,9 +126,13 @@ struct LavorazioneFormView: View {
         }
     }
 
+    private func parseWeight(_ text: String) -> Double? {
+        Format.grams.number(from: text)?.doubleValue
+    }
+
     private func save() {
-        let wax = Double(waxWeightText.replacingOccurrences(of: ",", with: "."))
-        let silver = Double(silverWeightText.replacingOccurrences(of: ",", with: "."))
+        let wax = parseWeight(waxWeightText)
+        let silver = parseWeight(silverWeightText)
 
         if let lav = lavorazione {
             lav.label = label.trimmingCharacters(in: .whitespaces)
@@ -137,6 +141,7 @@ struct LavorazioneFormView: View {
         } else {
             let lav = Lavorazione(label: label.trimmingCharacters(in: .whitespaces), session: session)
             lav.waxWeight = wax
+            if silverFieldUnlocked { lav.silverWeight = silver }
             context.insert(lav)
         }
         dismiss()
