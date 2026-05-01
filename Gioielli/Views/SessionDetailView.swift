@@ -282,16 +282,3 @@ private struct DoubleFieldRow: View {
         }
     }
 }
-
-// Stub — replaced in Task 7
-struct LavorazioneFormView: View {
-    let session: CastingSession
-    var lavorazione: Lavorazione?
-    @Environment(\.dismiss) private var dismiss
-    var body: some View {
-        NavigationStack {
-            Text("Lavorazione form — coming in Task 7")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Chiudi") { dismiss() } } }
-        }
-    }
-}
