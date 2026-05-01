@@ -68,16 +68,4 @@ final class LavorazioneTests: XCTestCase {
         XCTAssertNil(l.cost)
     }
 
-    func testCost_waxWeightIsIgnored() {
-        let s = makeSession(silverCost: 100, castingCost: 80)
-        let l1 = Lavorazione(label: "A", session: s)
-        l1.waxWeight = 999
-        l1.silverWeight = 20
-        let l2 = Lavorazione(label: "B", session: s)
-        l2.waxWeight = 999
-        l2.silverWeight = 20
-        container.mainContext.insert(l1)
-        container.mainContext.insert(l2)
-        XCTAssertEqual(l1.cost!, 90.0, accuracy: 0.001)
-    }
 }

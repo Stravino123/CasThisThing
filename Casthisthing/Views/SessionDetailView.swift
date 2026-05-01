@@ -232,6 +232,13 @@ private struct LavorazioneRow: View {
                     .font(.subheadline)
                     .foregroundStyle(.tertiary)
             }
+            if let data = lav.photoData, let img = UIImage(data: data) {
+                Image(uiImage: img)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 32, height: 32)
+                    .clipShape(RoundedRectangle(cornerRadius: 6))
+            }
             Image(systemName: "chevron.right")
                 .font(.caption)
                 .foregroundStyle(.tertiary)

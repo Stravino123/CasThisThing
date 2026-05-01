@@ -5,8 +5,8 @@ import SwiftData
 final class Lavorazione: Identifiable {
     var id: UUID
     var label: String
-    var waxWeight: Double?      // entered at step 1 — historical ref only, never in cost calc
     var silverWeight: Double?   // entered after picking up pieces — drives cost calc
+    @Attribute(.externalStorage) var photoData: Data?
     var session: CastingSession
 
     init(label: String, session: CastingSession) {
