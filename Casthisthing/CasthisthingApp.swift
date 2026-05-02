@@ -5,7 +5,8 @@ import SwiftData
 struct CasthisthingApp: App {
     var body: some Scene {
         WindowGroup {
-            SessionListView()
+            HomeView()
+                .preferredColorScheme(.dark)
         }
         .modelContainer(for: [CastingSession.self, Lavorazione.self])
     }
