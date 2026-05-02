@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftData
 
 // MARK: - Tab enum
 
@@ -18,7 +17,6 @@ enum CastTab: CaseIterable {
 
 struct CastCardView: View {
     @Bindable var session: CastingSession
-    @Environment(\.modelContext) private var context
 
     @State private var tab: CastTab = .cast
     @Namespace private var tabNS
