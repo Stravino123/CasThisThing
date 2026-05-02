@@ -6,6 +6,7 @@ struct HomeView: View {
     @Query(sort: \CastingSession.date, order: .reverse) private var sessions: [CastingSession]
 
     @State private var showPrevious = false
+    @State private var showCatalog = false
 
     private var currentSession: CastingSession? {
         sessions.first { !$0.isComplete }
@@ -19,9 +20,10 @@ struct HomeView: View {
                 // Logo area
                 HStack {
                     Text("CASTHISTHING")
-                        .font(.system(size: 15, weight: .bold, design: .monospaced))
+                        .font(DS.Font.logo)
                         .tracking(3)
-                        .foregroundStyle(AppTheme.textPrimary)
+                        .foregroundStyle(DS.Color.text1)
+                        .onLongPressGesture { showCatalog = true }
                     Spacer()
                     Button {
                         addSession()
@@ -84,6 +86,9 @@ struct HomeView: View {
         }
         .sheet(isPresented: $showPrevious) {
             PreviousCastsView()
+        }
+        .sheet(isPresented: $showCatalog) {
+            ComponentCatalogView()
         }
     }
 
