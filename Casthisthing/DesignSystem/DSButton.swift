@@ -3,6 +3,7 @@ import SwiftUI
 // MARK: - DSButtonStyle
 
 /// Multi-variant button — primary variant pixel-perfect from Figma node 10:8.
+/// Heights: sm=36pt  md=48pt  lg=56pt  icon=40pt
 /// Usage: `.buttonStyle(DSButtonStyle(.primary))`
 struct DSButtonStyle: ButtonStyle {
 
@@ -32,7 +33,8 @@ struct DSButtonStyle: ButtonStyle {
         configuration.label
             .font(labelFont)
             .foregroundStyle(labelColor)
-            .padding(padding)
+            .padding(.horizontal, hPadding)
+            .frame(minHeight: height)
             .background(background)
             .clipShape(Capsule())
             .overlay(border)
@@ -59,16 +61,21 @@ struct DSButtonStyle: ButtonStyle {
         }
     }
 
-    private var padding: EdgeInsets {
+    private var height: CGFloat {
         switch (variant, size) {
-        case (.icon, _):
-            return EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
-        case (_, .sm):
-            return EdgeInsets(top: 8,  leading: 12, bottom: 8,  trailing: 12)
-        case (_, .md):
-            return EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
-        case (_, .lg):
-            return EdgeInsets(top: 16, leading: 20, bottom: 16, trailing: 20)
+        case (.icon, _): return 40
+        case (_, .sm):   return 36
+        case (_, .md):   return 48
+        case (_, .lg):   return 56
+        }
+    }
+
+    private var hPadding: CGFloat {
+        switch (variant, size) {
+        case (.icon, _): return 10
+        case (_, .sm):   return 12
+        case (_, .md):   return 16
+        case (_, .lg):   return 20
         }
     }
 
