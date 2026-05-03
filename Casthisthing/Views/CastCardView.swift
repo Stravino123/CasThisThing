@@ -1,25 +1,11 @@
 import SwiftUI
 
-// MARK: - Tab enum
-
-enum CastTab: CaseIterable {
-    case cast, lavorazioni
-
-    var label: String {
-        switch self {
-        case .cast: return "Cast"
-        case .lavorazioni: return "Lavorazioni"
-        }
-    }
-}
-
 // MARK: - CastCardView
 
 struct CastCardView: View {
     @Bindable var session: CastingSession
 
-    @State private var tab: CastTab = .cast
-    @Namespace private var tabNS
+    @State private var tab: Int = 0
     @State private var isRenamingTitle = false
     @State private var draftTitle = ""
 
@@ -41,12 +27,12 @@ struct CastCardView: View {
                 }
             }
 
-            // Segmented control
-            CastSegmentedControl(selection: $tab, namespace: tabNS)
+            // Tab control (Figma node 9:109)
+            DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
 
             // Tab content
             Group {
-                if tab == .cast {
+                if tab == 0 {
                     CastTabContent(session: session)
                 } else {
                     LavorazioniTabContent(session: session)
@@ -65,36 +51,5 @@ struct CastCardView: View {
             }
             Button("Annulla", role: .cancel) {}
         }
-    }
-}
-
-// MARK: - Segmented control
-
-private struct CastSegmentedControl: View {
-    @Binding var selection: CastTab
-    var namespace: Namespace.ID
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(CastTab.allCases, id: \.self) { tab in
-                Button(tab.label) {
-                    withAnimation(.spring(duration: 0.25)) { selection = tab }
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 8)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(selection == tab ? AppTheme.bg : AppTheme.textSec)
-                .background {
-                    if selection == tab {
-                        Capsule()
-                            .fill(AppTheme.textPrimary)
-                            .matchedGeometryEffect(id: "pill", in: namespace)
-                    }
-                }
-            }
-        }
-        .padding(3)
-        .background(AppTheme.bg.opacity(0.6))
-        .clipShape(Capsule())
     }
 }
