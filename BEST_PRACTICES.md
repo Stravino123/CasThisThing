@@ -2,8 +2,19 @@
 
 ## Keyboard
 
-### `.ignoresSafeArea(.keyboard)` va sul root, non sui figli
-Il modificatore va applicato sul container **più esterno** (il `VStack` principale in `HomeView`), non su `ScrollView` o `Group` interni. Se il container cambia (es. rimuovi un `ScrollView`), verifica che il modificatore sia ancora sul nodo giusto.
+### Blocca il layout con `GeometryReader` — non fidarti di `.ignoresSafeArea(.keyboard)` da solo
+`.ignoresSafeArea(.keyboard)` non è sufficiente su `VStack` con contenuto dinamico (es. `Spacer`, `frame(maxHeight:.infinity)`). La soluzione definitiva: misurare l'altezza con `GeometryReader` e fissare frame espliciti. La keyboard non può spostare niente perché le altezze sono hardcoded.
+
+```swift
+GeometryReader { geo in
+    VStack(spacing: 0) {
+        header.frame(height: 72)
+        content.frame(height: geo.size.height - 72)
+    }
+    .frame(width: geo.size.width, height: geo.size.height)
+}
+.ignoresSafeArea(.keyboard) // ← sul GeometryReader, non sul VStack
+```
 
 ```swift
 // ✅ Corretto — sul VStack root

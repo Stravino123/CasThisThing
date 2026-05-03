@@ -37,7 +37,9 @@ struct PreviousCastsView: View {
                 }
             }
             .navigationTitle("Previous casts")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Chiudi") { dismiss() }

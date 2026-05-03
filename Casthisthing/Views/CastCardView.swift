@@ -1,57 +1,101 @@
 import SwiftUI
 
 // MARK: - CastCardView
-
 /// Main session card — Figma node 11:166
 /// Outer card: white bg + borderGeneral 1px border + radius.card (56pt) + padding 32pt
-/// Sections gap: 32pt
+/// Sections gap: 32pt (DS.Space.xl)
 struct CastCardView: View {
     @Bindable var session: CastingSession
 
     @State private var tab: Int = 0
     @State private var isRenamingTitle = false
     @State private var draftTitle = ""
+    @State private var showTooltip = false
+
+    private var castComplete:   Bool { session.isComplete }
+    private var hasLavorazioni: Bool { !session.lavorazioni.isEmpty }
+    private var canCalculate:   Bool { castComplete && hasLavorazioni }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
+        ZStack {
+            // ── Layer 1: contenuto card ────────────────────────────────────
+            VStack(alignment: .leading, spacing: DS.Space.xl) {
 
-            // Title
-            HStack(alignment: .firstTextBaseline) {
-                Text(session.title)
-                    .font(DS.Font.excon(size: 24, weight: 700))
-                    .foregroundStyle(DS.Color.text)
-                    .lineLimit(1)
-                Spacer()
+                // Title
+                HStack(alignment: .firstTextBaseline) {
+                    Text(session.title)
+                        .font(DS.Font.excon(size: 24, weight: 700))
+                        .foregroundStyle(DS.Color.text)
+                        .lineLimit(1)
+                    Spacer()
+                    Button {
+                        draftTitle = session.title
+                        isRenamingTitle = true
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundStyle(DS.Color.textSub)
+                    }
+                }
+
+                // Tab selector — Figma node 9:109
+                DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
+
+                // Tab content — maxHeight: .infinity garantisce altezza fissa
+                Group {
+                    if tab == 0 {
+                        CastTabContent(session: session)
+                    } else {
+                        LavorazioniTabContent()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .animation(.easeInOut(duration: 0.2), value: tab)
+
+                // CTA — il tooltip fluttua 8pt sopra il bottone come overlay;
+                // il dismiss layer (layer 2) cattura i tap ovunque per chiuderlo.
                 Button {
-                    draftTitle = session.title
-                    isRenamingTitle = true
+                    guard !canCalculate else { return /* TODO: calcola */ }
+                    withAnimation(.spring(duration: 0.2)) { showTooltip.toggle() }
                 } label: {
-                    Image(systemName: "pencil")
-                        .foregroundStyle(DS.Color.textSub)
+                    HStack(spacing: DS.Space.sm) {
+                        DSIcon.sparkle.view(size: 24, color: .white)
+                        Text("Calcola costo pezzi")
+                    }
                 }
-            }
-
-            // Tab — Figma node 9:109
-            DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
-
-            // Tab content — card heights fixed, wrapper expands
-            Group {
-                if tab == 0 {
-                    CastTabContent(session: session)
-                } else {
-                    LavorazioniTabContent(session: session)
-                }
-            }
-            .animation(.easeInOut(duration: 0.2), value: tab)
-
-            Spacer() // fills remaining space, pushes button to bottom
-
-            // CTA button (placeholder — logic TBD)
-            Button("Calcola costo pezzi") { }
                 .buttonStyle(DSButtonStyle(.primary))
+                // Tooltip posizionato 8pt sopra il bottone.
+                // .overlay(alignment: .bottom) → bottom del tooltip = bottom del bottone
+                // offset(y: -(altezza bottone 48 + gap 8)) → bottom del tooltip = top bottone - 8pt
+                .overlay(alignment: .bottom) {
+                    if showTooltip && !canCalculate {
+                        DSTooltip(items: [
+                            .init(label: "Cast inserito",        isDone: castComplete),
+                            .init(label: "Lavorazioni aggiunte", isDone: hasLavorazioni)
+                        ])
+                        .frame(maxWidth: .infinity)
+                        .offset(y: -(48 + DS.Space.sm))
+                        .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .bottom)))
+                        .allowsHitTesting(false) // i tap passano al dismiss layer
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            // ── Layer 2: dismiss overlay ───────────────────────────────────
+            // Appare solo quando il tooltip è visibile.
+            // Cattura qualsiasi tap sulla card e chiude il tooltip.
+            // Essendo l'ultimo nel ZStack è sopra tutto il contenuto,
+            // tranne il tooltip che è non-interattivo (layer 1, allowsHitTesting: false).
+            if showTooltip {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation(.spring(duration: 0.2)) { showTooltip = false }
+                    }
+            }
         }
-        .frame(maxHeight: .infinity)
-        .padding(32)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(DS.Space.xl)
         .background(
             RoundedRectangle(cornerRadius: DS.Radius.card)
                 .fill(DS.Color.general)

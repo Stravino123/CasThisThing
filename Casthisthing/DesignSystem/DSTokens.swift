@@ -51,6 +51,7 @@ enum DS {
         static let border3      = borderGeneral.opacity(0.3)
         static let stepDoneFill = primary
         static let stepDoneText = onPrimary
+        static let tooltipBg    = SwiftUI.Color(hex: "#262626")  // ← neutral/1900
     }
 
     // MARK: - Typography

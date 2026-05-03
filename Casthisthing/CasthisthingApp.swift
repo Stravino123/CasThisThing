@@ -20,7 +20,7 @@ struct CasthisthingApp: App {
 
 // MARK: - Font registration
 
-private enum FontLoader {
+enum FontLoader {
     static func registerFonts() {
         let fontNames = ["Excon-Variable"]
         for name in fontNames {
@@ -30,5 +30,15 @@ private enum FontLoader {
             }
             CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
         }
+    }
+}
+
+// MARK: - Preview font helper
+
+extension View {
+    /// Registra Excon Variable prima del rendering — usato nei #Preview
+    func registerFonts() -> some View {
+        FontLoader.registerFonts()
+        return self
     }
 }

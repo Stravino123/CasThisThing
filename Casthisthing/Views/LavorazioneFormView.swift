@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import UIKit
 
 struct LavorazioneFormView: View {
     let session: CastingSession
@@ -120,7 +121,7 @@ struct LavorazioneFormView: View {
                 }
             }
             .onAppear { populateFields() }
-            .onChange(of: selectedPhotoItem) { _, newItem in
+            .onChange(of: selectedPhotoItem) { newItem in
                 guard let newItem else { return }
                 Task {
                     if let data = try? await newItem.loadTransferable(type: Data.self) {

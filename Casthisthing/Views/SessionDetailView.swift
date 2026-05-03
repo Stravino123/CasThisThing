@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct SessionDetailView: View {
     @Bindable var session: CastingSession
@@ -19,7 +20,9 @@ struct SessionDetailView: View {
             }
         }
         .navigationTitle(session.title)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
+        #endif
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("Rinomina") {
