@@ -50,15 +50,36 @@ enum DS {
     }
 
     // MARK: - Typography
+    // Uses Excon Variable — registered at app launch via FontLoader in CasthisthingApp.swift
 
     enum Font {
-        static let logo    = SwiftUI.Font.system(size: 14, weight: .bold, design: .monospaced)
-        static let title   = SwiftUI.Font.system(size: 20, weight: .bold)
-        static let body    = SwiftUI.Font.system(size: 15, weight: .regular)
-        static let label   = SwiftUI.Font.system(size: 13, weight: .medium)
-        static let caption = SwiftUI.Font.system(size: 11, weight: .regular)
-        static let mono    = SwiftUI.Font.system(size: 15, weight: .regular).monospacedDigit()
-        static let monoSm  = SwiftUI.Font.system(size: 13, weight: .regular).monospacedDigit()
+        static let logo    = excon(size: 14, weight: 700)   // bold monospaced feel
+        static let title   = excon(size: 20, weight: 700)
+        static let body    = excon(size: 15, weight: 400)
+        static let label   = excon(size: 13, weight: 500)
+        static let caption = excon(size: 11, weight: 400)
+        static let mono    = SwiftUI.Font.system(size: 15).monospacedDigit() // keep mono digits
+        static let monoSm  = SwiftUI.Font.system(size: 13).monospacedDigit()
+
+        /// Create an Excon font at any size and weight (100–900).
+        static func excon(size: CGFloat, weight: Int = 400) -> SwiftUI.Font {
+            .custom("Excon-Variable", size: size)
+                .weight(fontWeight(weight))
+        }
+
+        private static func fontWeight(_ w: Int) -> SwiftUI.Font.Weight {
+            switch w {
+            case ..<200: return .ultraLight
+            case ..<300: return .thin
+            case ..<400: return .light
+            case ..<500: return .regular
+            case ..<600: return .medium
+            case ..<700: return .semibold
+            case ..<800: return .bold
+            case ..<900: return .heavy
+            default:     return .black
+            }
+        }
     }
 
     // MARK: - Spacing
