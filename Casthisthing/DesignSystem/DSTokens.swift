@@ -42,6 +42,9 @@ enum DS {
         static let text1        = SwiftUI.Color(hex: "#1B1B1B")     // near-black su canvas chiaro
         static let text2        = text1.opacity(0.55)
         static let text3        = text1.opacity(0.28)
+        static let text           = SwiftUI.Color(hex: "#1B1B1B") // ← neutral/2000
+        static let textSub        = SwiftUI.Color(hex: "#767676") // ← neutral/1200
+        static let borderPrimary  = primary                      // ← color1/1100
         static let border1      = borderGeneral
         static let border2      = borderGeneral.opacity(0.6)
         static let border3      = borderGeneral.opacity(0.3)
@@ -63,7 +66,7 @@ enum DS {
 
         /// Create an Excon font at any size and weight (100–900).
         static func excon(size: CGFloat, weight: Int = 400) -> SwiftUI.Font {
-            .custom("Excon-Variable", size: size)
+            .custom("Excon Variable", size: size)
                 .weight(fontWeight(weight))
         }
 
@@ -98,6 +101,8 @@ enum DS {
         static let sm: CGFloat  = 8
         static let md: CGFloat  = 14
         static let lg: CGFloat  = 20
+        static let xl: CGFloat   = 28   // CardDataEntry, Tab
+        static let card: CGFloat = 56   // outer card (Container node 11:166)
         static let pill: CGFloat = 100
     }
 }

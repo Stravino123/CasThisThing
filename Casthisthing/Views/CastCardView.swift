@@ -2,6 +2,9 @@ import SwiftUI
 
 // MARK: - CastCardView
 
+/// Main session card — Figma node 11:166
+/// Outer card: white bg + borderGeneral 1px border + radius.card (56pt) + padding 32pt
+/// Sections gap: 32pt
 struct CastCardView: View {
     @Bindable var session: CastingSession
 
@@ -10,12 +13,13 @@ struct CastCardView: View {
     @State private var draftTitle = ""
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Header
+        VStack(alignment: .leading, spacing: 32) {
+
+            // Title
             HStack(alignment: .firstTextBaseline) {
                 Text(session.title)
-                    .font(.title3.bold())
-                    .foregroundStyle(AppTheme.textPrimary)
+                    .font(DS.Font.excon(size: 24, weight: 700))
+                    .foregroundStyle(DS.Color.text)
                     .lineLimit(1)
                 Spacer()
                 Button {
@@ -23,11 +27,11 @@ struct CastCardView: View {
                     isRenamingTitle = true
                 } label: {
                     Image(systemName: "pencil")
-                        .foregroundStyle(AppTheme.textSec)
+                        .foregroundStyle(DS.Color.textSub)
                 }
             }
 
-            // Tab control (Figma node 9:109)
+            // Tab — Figma node 9:109
             DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
 
             // Tab content
@@ -39,10 +43,21 @@ struct CastCardView: View {
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: tab)
+
+            // CTA button (placeholder — logic TBD)
+            Button("Calcola costo pezzi") { }
+                .buttonStyle(DSButtonStyle(.primary))
+                .frame(maxWidth: .infinity)
         }
-        .padding(AppTheme.cardPadding)
-        .background(AppTheme.cardBg)
-        .clipShape(RoundedRectangle(cornerRadius: AppTheme.cardRadius))
+        .padding(32)
+        .background(
+            RoundedRectangle(cornerRadius: DS.Radius.card)
+                .fill(DS.Color.general)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DS.Radius.card)
+                        .stroke(DS.Color.borderGeneral, lineWidth: 1)
+                )
+        )
         .alert("Rinomina sessione", isPresented: $isRenamingTitle) {
             TextField("Titolo", text: $draftTitle)
             Button("Salva") {
