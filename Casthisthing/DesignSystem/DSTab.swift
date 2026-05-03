@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Tab segmented control — Figma node 9:109
 /// Container: white bg + borderGeneral 1px border + radius xl (28pt) + h-40pt
-/// Active item:  primaryLight bg + primary 1px border + radius xl
+/// Active item:  primaryLight bg + borderPrimary 1px border + radius xl
 /// Inactive item: no bg/border, textSub text
 struct DSTab: View {
     let labels: [String]
@@ -26,7 +26,7 @@ struct DSTab: View {
                                     .fill(DS.Color.primaryLight)
                                     .overlay(
                                         RoundedRectangle(cornerRadius: DS.Radius.xl)
-                                            .stroke(DS.Color.primary, lineWidth: 1)
+                                            .stroke(DS.Color.borderPrimary, lineWidth: 1)
                                     )
                                     .matchedGeometryEffect(id: "tab-pill", in: ns)
                             }
