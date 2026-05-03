@@ -26,6 +26,7 @@ enum DS {
         // Borders
         static let borderGeneral   = SwiftUI.Color(hex: "#FDDAE0")  // ← color1/400
         static let borderDisabled  = SwiftUI.Color(hex: "#E2E2E2")  // ← neutral/400
+        static let borderDefault   = SwiftUI.Color(hex: "#D9D9D9")  // ← CardWork filled border
 
         // General / surface
         static let general         = SwiftUI.Color(hex: "#FFFFFF")  // white
