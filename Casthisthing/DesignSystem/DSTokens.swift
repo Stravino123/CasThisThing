@@ -6,32 +6,47 @@ import SwiftUI
 enum DS {
 
     // MARK: - Colors
+    // Source: alias.json exported from Figma (Global + alias collections)
+    // Update here whenever aliases change in Figma.
 
     enum Color {
-        /// App background — near-black
-        static let bg        = SwiftUI.Color(hex: "#0E0E12")
-        /// Default card surface
-        static let surface   = SwiftUI.Color(hex: "#18181F")
-        /// Slightly lighter surface (active step, hover states)
-        static let surfaceAlt = SwiftUI.Color(hex: "#202029")
+        // Canvas — app background (← color1/200)
+        static let canvas          = SwiftUI.Color(hex: "#FFF5F7")
 
-        /// Gold/sand accent (costs, highlights)
-        static let accent    = SwiftUI.Color(hex: "#D4B87A")
-        static let accentDim = accent.opacity(0.20)
+        // Primary (← color1/1100)
+        static let primary         = SwiftUI.Color(hex: "#FF006E")
+        static let onPrimary       = SwiftUI.Color(hex: "#FFFFFF")  // ← color1/100
+        static let primaryLight    = SwiftUI.Color(hex: "#FFF5F7")  // ← color1/200
+        static let onPrimaryLight  = SwiftUI.Color(hex: "#BC004E")  // ← color1/1400
 
-        // Text hierarchy
-        static let text1 = SwiftUI.Color.white                    // primary
-        static let text2 = SwiftUI.Color.white.opacity(0.55)      // secondary
-        static let text3 = SwiftUI.Color.white.opacity(0.28)      // tertiary / disabled
+        // Secondary (← color4/700)
+        static let secondary       = SwiftUI.Color(hex: "#8FC1CB")
+        static let onSecondary     = SwiftUI.Color(hex: "#FFFFFF")  // ← color4/100
 
         // Borders
-        static let border1 = SwiftUI.Color.white.opacity(0.75)    // strong (done step)
-        static let border2 = SwiftUI.Color.white.opacity(0.30)    // dashed (active step)
-        static let border3 = SwiftUI.Color.white.opacity(0.10)    // subtle (locked step)
+        static let borderGeneral   = SwiftUI.Color(hex: "#FDDAE0")  // ← color1/400
+        static let borderDisabled  = SwiftUI.Color(hex: "#E2E2E2")  // ← neutral/400
 
-        // Step-done fill — white card
-        static let stepDoneFill   = SwiftUI.Color.white
-        static let stepDoneText   = SwiftUI.Color.black
+        // General / surface
+        static let general         = SwiftUI.Color(hex: "#FFFFFF")  // white
+        static let disabled        = SwiftUI.Color(hex: "#F8F8F8")  // ← neutral/200
+        static let onDisabled      = SwiftUI.Color(hex: "#B9B9B9")  // ← neutral/700
+
+        // MARK: - Component semantics (usati dai componenti DS)
+        // Mappati sugli alias Figma — aggiornare quando gli alias cambiano
+        static let bg           = canvas
+        static let surface      = disabled
+        static let surfaceAlt   = SwiftUI.Color(hex: "#F1F1F1")
+        static let accent       = primary
+        static let accentDim    = primaryLight
+        static let text1        = SwiftUI.Color(hex: "#1B1B1B")     // near-black su canvas chiaro
+        static let text2        = text1.opacity(0.55)
+        static let text3        = text1.opacity(0.28)
+        static let border1      = borderGeneral
+        static let border2      = borderGeneral.opacity(0.6)
+        static let border3      = borderGeneral.opacity(0.3)
+        static let stepDoneFill = primary
+        static let stepDoneText = onPrimary
     }
 
     // MARK: - Typography
