@@ -5,7 +5,6 @@ struct HomeView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \CastingSession.date, order: .reverse) private var sessions: [CastingSession]
 
-    @State private var showPrevious = false
     @State private var showCatalog = false
 
     private var currentSession: CastingSession? {
@@ -13,79 +12,35 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ZStack {
-            AppTheme.bg.ignoresSafeArea()
+        VStack(spacing: 0) {
 
-            VStack(spacing: 0) {
-                // Logo area
-                HStack {
-                    Text("CASTHISTHING")
-                        .font(DS.Font.logo)
-                        .tracking(3)
-                        .foregroundStyle(DS.Color.text1)
+            // ── Header ──────────────────────────────────────────────────────
+            // Logo TBD — black bar, extends behind status bar
+            Color.black
+                .ignoresSafeArea(edges: .top)
+                .frame(height: 72)
+                .overlay(
+                    // Long-press hidden shortcut → DS catalog (dev only)
+                    Color.clear.contentShape(Rectangle())
                         .onLongPressGesture { showCatalog = true }
-                    Spacer()
-                    Button {
-                        addSession()
-                    } label: {
-                        Image(systemName: "plus")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(AppTheme.textPrimary)
-                            .frame(width: 36, height: 36)
-                            .background(AppTheme.cardBg)
-                            .clipShape(Circle())
-                    }
-                }
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 24)
+                )
 
-                // Main content
+            // ── Content ──────────────────────────────────────────────────────
+            ScrollView {
                 if let session = currentSession {
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack {
-                            Image(systemName: "star.fill")
-                                .font(.caption)
-                                .foregroundStyle(AppTheme.accent)
-                            Text("Current cast")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(AppTheme.textSec)
-                                .textCase(.uppercase)
-                                .tracking(1)
-                        }
+                    CastCardView(session: session)
                         .padding(.horizontal, 24)
-
-                        ScrollView {
-                            CastCardView(session: session)
-                                .padding(.horizontal, 0)
-                        }
-                        .scrollBounceBehavior(.basedOnSize)
-                    }
+                        .padding(.vertical, 24)
                 } else {
-                    Spacer()
-                    VStack(spacing: 16) {
-                        Image(systemName: "drop")
-                            .font(.system(size: 48))
-                            .foregroundStyle(AppTheme.textTer)
-                        Text("Nessuna sessione in corso")
-                            .font(.headline)
-                            .foregroundStyle(AppTheme.textSec)
-                        Button("Nuova sessione") { addSession() }
-                            .buttonStyle(CapsuleButtonStyle())
-                    }
-                    Spacer()
+                    // Empty state — TBD
+                    Button("Nuova sessione") { addSession() }
+                        .buttonStyle(DSButtonStyle(.primary))
+                        .padding(24)
                 }
-
-                Spacer()
-
-                // Previous casts button
-                Button("Previous casts") { showPrevious = true }
-                    .buttonStyle(CapsuleButtonStyle())
-                    .padding(.bottom, 32)
             }
-        }
-        .sheet(isPresented: $showPrevious) {
-            PreviousCastsView()
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(DS.Color.canvas.ignoresSafeArea())
         }
         .sheet(isPresented: $showCatalog) {
             ComponentCatalogView()
