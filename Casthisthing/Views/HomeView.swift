@@ -13,7 +13,6 @@ struct HomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
             // ── Header ──────────────────────────────────────────────────────
             // Logo TBD — black bar, extends behind status bar
             Color.black
@@ -26,22 +25,23 @@ struct HomeView: View {
                 )
 
             // ── Content ──────────────────────────────────────────────────────
-            ScrollView {
+            Group {
                 if let session = currentSession {
                     CastCardView(session: session)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 24)
+                        .padding(24)
                 } else {
                     // Empty state — TBD
                     Button("Nuova sessione") { addSession() }
                         .buttonStyle(DSButtonStyle(.primary))
                         .padding(24)
+                    Spacer()
                 }
             }
-            .scrollBounceBehavior(.basedOnSize)
+            .ignoresSafeArea(.keyboard)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(DS.Color.canvas.ignoresSafeArea())
         }
+        .ignoresSafeArea(.keyboard)
         .sheet(isPresented: $showCatalog) {
             ComponentCatalogView()
         }
@@ -52,4 +52,17 @@ struct HomeView: View {
         context.insert(s)
         try? context.save()
     }
+}
+
+// MARK: - Preview
+
+#Preview {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: CastingSession.self, Lavorazione.self, configurations: config)
+    let session = CastingSession(title: "Cast in corso", date: .now)
+    session.waxWeight = 12.5
+    container.mainContext.insert(session)
+    return HomeView()
+        .modelContainer(container)
+        .registerFonts()
 }

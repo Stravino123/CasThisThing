@@ -34,7 +34,7 @@ struct CastCardView: View {
             // Tab — Figma node 9:109
             DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
 
-            // Tab content
+            // Tab content — card heights fixed, wrapper expands
             Group {
                 if tab == 0 {
                     CastTabContent(session: session)
@@ -44,11 +44,13 @@ struct CastCardView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: tab)
 
+            Spacer() // fills remaining space, pushes button to bottom
+
             // CTA button (placeholder — logic TBD)
             Button("Calcola costo pezzi") { }
                 .buttonStyle(DSButtonStyle(.primary))
-                .frame(maxWidth: .infinity)
         }
+        .frame(maxHeight: .infinity)
         .padding(32)
         .background(
             RoundedRectangle(cornerRadius: DS.Radius.card)

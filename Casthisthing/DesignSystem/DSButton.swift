@@ -34,7 +34,7 @@ struct DSButtonStyle: ButtonStyle {
             .font(labelFont)
             .foregroundStyle(labelColor)
             .padding(.horizontal, hPadding)
-            .frame(minHeight: height)
+            .frame(maxWidth: .infinity, minHeight: height)
             .background(background)
             .clipShape(Capsule())
             .overlay(border)
