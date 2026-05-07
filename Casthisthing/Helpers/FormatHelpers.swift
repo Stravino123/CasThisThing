@@ -1,6 +1,15 @@
 import Foundation
 
 enum Format {
+    /// Formatter generico decimale (fino a 4 cifre) — usato da DSCardDataEntry e ovunque serva.
+    static let decimal: NumberFormatter = {
+        let f = NumberFormatter()
+        f.numberStyle = .decimal
+        f.maximumFractionDigits = 4
+        f.locale = .current
+        return f
+    }()
+
     static let grams: NumberFormatter = {
         let f = NumberFormatter()
         f.numberStyle = .decimal

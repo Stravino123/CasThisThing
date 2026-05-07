@@ -37,9 +37,9 @@ final class CastingSession: Identifiable {
 
     // Drives field unlock logic in the UI (1–4).
     var currentStep: Int {
-        if castingCost != nil { return 4 }
-        if silverCost != nil  { return 3 }
-        if silverNeeded != nil { return 2 }
+        if silverCost != nil   { return 4 }
+        if silverNeeded != nil { return 3 }
+        if waxWeight != nil    { return 2 }
         return 1
     }
 }

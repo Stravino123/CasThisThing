@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UIKit
 
 struct SessionDetailView: View {
     @Bindable var session: CastingSession
@@ -7,8 +8,6 @@ struct SessionDetailView: View {
 
     @State private var showingAddLavorazione = false
     @State private var editingLavorazione: Lavorazione? = nil
-    @State private var isEditingTitle = false
-    @State private var draftTitle = ""
 
     var body: some View {
         Form {
@@ -19,23 +18,9 @@ struct SessionDetailView: View {
             }
         }
         .navigationTitle(session.title)
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.large)
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button("Rinomina") {
-                    draftTitle = session.title
-                    isEditingTitle = true
-                }
-            }
-        }
-        .alert("Rinomina sessione", isPresented: $isEditingTitle) {
-            TextField("Titolo", text: $draftTitle)
-            Button("Salva") {
-                let trimmed = draftTitle.trimmingCharacters(in: .whitespaces)
-                if !trimmed.isEmpty { session.title = trimmed }
-            }
-            Button("Annulla", role: .cancel) {}
-        }
+        #endif
         .sheet(isPresented: $showingAddLavorazione) {
             LavorazioneFormView(session: session, lavorazione: nil)
         }
