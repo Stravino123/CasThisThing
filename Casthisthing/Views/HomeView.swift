@@ -7,21 +7,31 @@ struct HomeView: View {
 
     @State private var showCatalog = false
 
-    private var currentSession: CastingSession? {
-        sessions.first { !$0.isComplete }
-    }
+    // Mostra sempre la sessione più recente, indipendentemente dall'isComplete.
+    // L'empty state appare solo quando non esiste ancora alcuna sessione.
+    private var currentSession: CastingSession? { sessions.first }
 
     var body: some View {
-        // GeometryReader misura l'altezza prima che la tastiera appaia.
-        // Le altezze vengono fissate esplicitamente — la tastiera non può
-        // spostare nulla. Vedi BEST_PRACTICES.md § Keyboard.
         GeometryReader { geo in
             VStack(spacing: 0) {
 
                 // ── Header ────────────────────────────────────────────────
-                Color.black
+                // Colori hardcoded (identità brand, non cambiano col tema)
+                // bg #171717, bordo bottom #474747 — da Figma node 20:502
+                Color(hex: "#171717")
                     .ignoresSafeArea(edges: .top)
                     .frame(height: 72)
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(Color(hex: "#474747"))
+                            .frame(height: 1)
+                    }
+                    .overlay {
+                        Image("logo")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 34)
+                    }
                     .overlay(
                         Color.clear.contentShape(Rectangle())
                             .onLongPressGesture { showCatalog = true }
@@ -32,7 +42,7 @@ struct HomeView: View {
 
                 if let session = currentSession {
                     CastCardView(session: session)
-                        .padding(DS.Space.lg)          // 24pt — margini uguali su tutti i lati
+                        .padding(DS.Space.lg)
                         .frame(height: contentHeight)
                 } else {
                     VStack {
@@ -48,14 +58,16 @@ struct HomeView: View {
             .frame(width: geo.size.width, height: geo.size.height)
             .background(DS.Color.canvas.ignoresSafeArea())
         }
-        .ignoresSafeArea(.keyboard)   // sul GeometryReader, non sul VStack interno
+        .ignoresSafeArea(.keyboard)
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(isPresented: $showCatalog) {
             ComponentCatalogView()
         }
     }
 
     private func addSession() {
-        let s = CastingSession(title: "Nuova sessione", date: .now)
+        let number = sessions.count + 1
+        let s = CastingSession(title: "Cast #\(number)", date: .now)
         context.insert(s)
         try? context.save()
     }

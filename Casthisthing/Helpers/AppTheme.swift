@@ -1,26 +1,41 @@
 import SwiftUI
+import Observation
 
-enum AppTheme {
-    // Backgrounds
-    static let bg        = Color(red: 0.06, green: 0.06, blue: 0.08)   // ~#0F0F14
-    static let cardBg    = Color(red: 0.10, green: 0.10, blue: 0.13)   // ~#1A1A21
-    static let cardBgAlt = Color(red: 0.13, green: 0.13, blue: 0.17)   // step attivo
+// MARK: - AppTheme
 
-    // Accents
-    static let accent    = Color(red: 0.85, green: 0.75, blue: 0.55)   // oro/sabbia
-    static let accentDim = accent.opacity(0.25)
+enum AppTheme: String, CaseIterable, Identifiable {
+    case magenta = "Magenta"
+    case premium = "Premium"
 
-    // Text
-    static let textPrimary = Color.white
-    static let textSec     = Color.white.opacity(0.55)
-    static let textTer     = Color.white.opacity(0.30)
+    var id: String { rawValue }
 
-    // Borders
-    static let borderActive = Color.white.opacity(0.80)
-    static let borderDash   = Color.white.opacity(0.35)
-    static let borderLocked = Color.white.opacity(0.12)
+    /// ColorScheme di sistema associato al tema
+    var colorScheme: ColorScheme {
+        self == .premium ? .dark : .light
+    }
 
-    // Layout
-    static let cardPadding: CGFloat = 20
-    static let cardRadius:  CGFloat = 20
+    var icon: String {
+        self == .magenta ? "paintbrush.fill" : "star.fill"
+    }
+}
+
+// MARK: - ThemeStore
+
+/// Singleton @Observable — persiste la scelta in UserDefaults.
+/// Tutti i componenti DS leggono ThemeStore.shared.current;
+/// SwiftUI traccia l'accesso e ri-renderizza automaticamente quando cambia.
+@Observable
+final class ThemeStore {
+    static let shared = ThemeStore()
+
+    var current: AppTheme {
+        didSet {
+            UserDefaults.standard.set(current.rawValue, forKey: "casthisthing.theme")
+        }
+    }
+
+    private init() {
+        let saved = UserDefaults.standard.string(forKey: "casthisthing.theme") ?? ""
+        current = AppTheme(rawValue: saved) ?? .magenta
+    }
 }

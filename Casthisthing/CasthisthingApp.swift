@@ -9,10 +9,16 @@ struct CasthisthingApp: App {
         FontLoader.registerFonts()
     }
 
+    // @State su App struct: SwiftUI traccia ThemeStore.shared.current
+    // e ri-renderizza la window quando il tema cambia.
+    @State private var themeStore = ThemeStore.shared
+
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .preferredColorScheme(.dark)
+            NavigationStack {
+                HomeView()
+            }
+            .preferredColorScheme(themeStore.current.colorScheme)
         }
         .modelContainer(for: [CastingSession.self, Lavorazione.self])
     }

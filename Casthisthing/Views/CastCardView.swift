@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 // MARK: - CastCardView
 /// Main session card — Figma node 11:166
@@ -6,11 +7,12 @@ import SwiftUI
 /// Sections gap: 32pt (DS.Space.xl)
 struct CastCardView: View {
     @Bindable var session: CastingSession
+    @Environment(\.modelContext) private var context
 
     @State private var tab: Int = 0
-    @State private var isRenamingTitle = false
-    @State private var draftTitle = ""
     @State private var showTooltip = false
+    @State private var showResults = false
+    @State private var showPreviousCasts = false
 
     private var castComplete:   Bool { session.isComplete }
     private var hasLavorazioni: Bool { !session.lavorazioni.isEmpty }
@@ -22,43 +24,64 @@ struct CastCardView: View {
             VStack(alignment: .leading, spacing: DS.Space.xl) {
 
                 // Title
-                HStack(alignment: .firstTextBaseline) {
+                HStack(alignment: .center) {
                     Text(session.title)
                         .font(DS.Font.excon(size: 24, weight: 700))
                         .foregroundStyle(DS.Color.text)
                         .lineLimit(1)
                     Spacer()
-                    Button {
-                        draftTitle = session.title
-                        isRenamingTitle = true
+                    Menu {
+                        Button { showPreviousCasts = true } label: {
+                            Label("Cast precedenti", systemImage: "clock")
+                        }
+                        Divider()
+                        Button {
+                            let other = ThemeStore.shared.current == .magenta ? AppTheme.premium : .magenta
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                ThemeStore.shared.current = other
+                            }
+                        } label: {
+                            let other = ThemeStore.shared.current == .magenta ? AppTheme.premium : .magenta
+                            Label("Tema \(other.rawValue)", systemImage: other.icon)
+                        }
+                        Divider()
+                        Button { resetAll() } label: {
+                            Label("Ricomincia sessione", systemImage: "arrow.counterclockwise")
+                        }
                     } label: {
-                        Image(systemName: "pencil")
-                            .foregroundStyle(DS.Color.textSub)
+                        DSIconButton(icon: .dotsThree, action: {})
                     }
+                    .menuStyle(.automatic)
                 }
 
                 // Tab selector — Figma node 9:109
-                DSTab(labels: ["Cast", "Pezzi"], selection: $tab)
+                DSTab(labels: ["Cast", "Lavorazioni"], selection: $tab)
 
-                // Tab content — maxHeight: .infinity garantisce altezza fissa
-                Group {
-                    if tab == 0 {
-                        CastTabContent(session: session)
-                    } else {
-                        LavorazioniTabContent()
+                // Tab content — scrollabile, occupa lo spazio residuo tra tab e CTA
+                ScrollView {
+                    Group {
+                        if tab == 0 {
+                            CastTabContent(session: session)
+                        } else {
+                            LavorazioniTabContent(session: session)
+                        }
                     }
+                    .frame(maxWidth: .infinity, alignment: .top)
+                    .animation(.easeInOut(duration: 0.2), value: tab)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .animation(.easeInOut(duration: 0.2), value: tab)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
                 // CTA — il tooltip fluttua 8pt sopra il bottone come overlay;
                 // il dismiss layer (layer 2) cattura i tap ovunque per chiuderlo.
                 Button {
-                    guard !canCalculate else { return /* TODO: calcola */ }
-                    withAnimation(.spring(duration: 0.2)) { showTooltip.toggle() }
+                    if canCalculate {
+                        showResults = true
+                    } else {
+                        withAnimation(.spring(duration: 0.2)) { showTooltip.toggle() }
+                    }
                 } label: {
                     HStack(spacing: DS.Space.sm) {
-                        DSIcon.sparkle.view(size: 24, color: .white)
+                        DSIcon.sparkle.view(size: 24, color: DS.Color.onPrimary)
                         Text("Calcola costo pezzi")
                     }
                 }
@@ -69,8 +92,8 @@ struct CastCardView: View {
                 .overlay(alignment: .bottom) {
                     if showTooltip && !canCalculate {
                         DSTooltip(items: [
-                            .init(label: "Cast inserito",        isDone: castComplete),
-                            .init(label: "Lavorazioni aggiunte", isDone: hasLavorazioni)
+                            DSTooltipItem(label: "Informazioni del cast inserite", isDone: castComplete),
+                            DSTooltipItem(label: "Almeno una lavorazione aggiunta", isDone: hasLavorazioni)
                         ])
                         .frame(maxWidth: .infinity)
                         .offset(y: -(48 + DS.Space.sm))
@@ -104,13 +127,22 @@ struct CastCardView: View {
                         .stroke(DS.Color.borderGeneral, lineWidth: 1)
                 )
         )
-        .alert("Rinomina sessione", isPresented: $isRenamingTitle) {
-            TextField("Titolo", text: $draftTitle)
-            Button("Salva") {
-                let t = draftTitle.trimmingCharacters(in: .whitespaces)
-                if !t.isEmpty { session.title = t }
-            }
-            Button("Annulla", role: .cancel) {}
+        .sheet(isPresented: $showResults) {
+            CastResultView(session: session)
         }
+        .navigationDestination(isPresented: $showPreviousCasts) {
+            SessionsListView()
+        }
+    }
+
+    // MARK: - Reset
+
+    private func resetAll() {
+        session.waxWeight    = nil
+        session.silverNeeded = nil
+        session.silverCost   = nil
+        session.castingCost  = nil
+        session.lavorazioni.forEach { context.delete($0) }
+        try? context.save()
     }
 }

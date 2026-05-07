@@ -1,8 +1,5 @@
 import SwiftUI
 
-// MARK: - StepState (shared across CastTabContent + DSCardDataEntry)
-enum StepState { case done, active, locked }
-
 /// CardDataEntry — card a 3 stati per gli step della sessione.
 /// Corrisponde al componente Figma "CardDataEntry" (file WNXOBpVH9ySn8CvXRc0DbR, node 7:18).
 struct DSCardDataEntry: View {
@@ -10,19 +7,11 @@ struct DSCardDataEntry: View {
     let label: String
     let unit: String
     @Binding var value: Double?
-    let state: StepState
+    let state: DSStepState
 
     @State private var isExpanded = false
     @State private var text: String = ""
     @FocusState private var focused: Bool
-
-    private static let fmt: NumberFormatter = {
-        let f = NumberFormatter()
-        f.numberStyle = .decimal
-        f.maximumFractionDigits = 4
-        f.locale = .current
-        return f
-    }()
 
     var body: some View {
         Group {
@@ -34,18 +23,26 @@ struct DSCardDataEntry: View {
         }
         .onAppear {
             if let v = value {
-                text = DSCardDataEntry.fmt.string(from: NSNumber(value: v)) ?? ""
+                text = Format.decimal.string(from: NSNumber(value: v)) ?? ""
             }
+        }
+        // Salva il valore quando la tastiera viene chiusa (qualunque stato)
+        .onChange(of: focused) {
+            guard !focused else { return }
+            value = Format.decimal.number(from: text)?.doubleValue
+                ?? Double(text.replacingOccurrences(of: ",", with: "."))
+            isExpanded = false
         }
     }
 
     // MARK: - Filled (done) — bg primaryLight, bordo solid borderGeneral
+    // Tap → riapre la modifica inline
 
     private var filledCard: some View {
         HStack(spacing: 16) {
-            stepDSIcon.view(size: 24, color: DS.Color.primary)
+            stepIcon.view(size: 24, color: DS.Color.primary)
             VStack(alignment: .leading, spacing: 4) {
-                if let v = value {
+                if !isExpanded, let v = value {
                     Text(formattedValue(v))
                         .font(DS.Font.excon(size: 16, weight: 500))
                         .foregroundStyle(DS.Color.primary)
@@ -56,11 +53,38 @@ struct DSCardDataEntry: View {
                     .tracking(-0.24)
             }
             Spacer()
+            if isExpanded {
+                HStack(spacing: 4) {
+                    TextField("0", text: $text)
+                        .decimalKeyboard()
+                        .multilineTextAlignment(.trailing)
+                        .focused($focused)
+                        .foregroundStyle(DS.Color.text1)
+                        .font(DS.Font.excon(size: 20, weight: 500).monospacedDigit())
+                        .fixedSize()
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Conferma") { focused = false }
+                                    .font(DS.Font.excon(size: 16, weight: 600))
+                                    .foregroundStyle(DS.Color.primary)
+                            }
+                        }
+                    Text(unit)
+                        .foregroundStyle(DS.Color.textSub)
+                        .font(DS.Font.excon(size: 14, weight: 400))
+                }
+            }
         }
         .padding(DS.Space.md)
         .frame(minHeight: 80)
-        .background(RoundedRectangle(cornerRadius: DS.Radius.xl).fill(DS.Color.primaryLight))
-        .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl).stroke(DS.Color.borderGeneral, lineWidth: 1))
+        .cardStyle(fill: DS.Color.primaryLight, border: DS.Color.borderGeneral)
+        .contentShape(Rectangle())
+        .onTapGesture {
+            text = value.flatMap { Format.decimal.string(from: NSNumber(value: $0)) } ?? ""
+            isExpanded = true
+            focused   = true
+        }
     }
 
     // MARK: - Default (active) — bg white, bordo dashed primary
@@ -105,20 +129,13 @@ struct DSCardDataEntry: View {
         .padding(DS.Space.md)
         .frame(minHeight: 80)
         .background(RoundedRectangle(cornerRadius: DS.Radius.xl).fill(DS.Color.general))
-        .overlay(
-            RoundedRectangle(cornerRadius: DS.Radius.xl)
-                .stroke(style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
-                .foregroundStyle(DS.Color.primary)
-        )
+        .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl)
+            .stroke(style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
+            .foregroundStyle(DS.Color.primary))
         .contentShape(Rectangle())
         .onTapGesture {
             isExpanded = true
-            focused = true
-        }
-        .onChange(of: focused) { isFocused in
-            guard !isFocused else { return }
-            value = DSCardDataEntry.fmt.number(from: text)?.doubleValue
-                ?? Double(text.replacingOccurrences(of: ",", with: "."))
+            focused    = true
         }
     }
 
@@ -134,23 +151,21 @@ struct DSCardDataEntry: View {
         }
         .padding(DS.Space.md)
         .frame(minHeight: 80)
-        .background(RoundedRectangle(cornerRadius: DS.Radius.xl).fill(DS.Color.disabled))
-        .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl).stroke(DS.Color.borderDisabled, lineWidth: 1))
+        .cardStyle(fill: DS.Color.disabled, border: DS.Color.borderDisabled)
     }
 
     // MARK: - Helpers
 
-    private var stepDSIcon: DSIcon {
+    private var stepIcon: DSIcon {
         switch step {
-        case 1:  .barbell
-        case 2:  .dropHalf
-        case 3:  .piggyBank
-        default: .wallet
+        case 1:  .candle
+        case 2:  .circle
+        default: .coin
         }
     }
 
     private func formattedValue(_ v: Double) -> String {
-        let s = DSCardDataEntry.fmt.string(from: NSNumber(value: v)) ?? "\(v)"
+        let s = Format.decimal.string(from: NSNumber(value: v)) ?? "\(v)"
         return "\(s) \(unit)"
     }
 }

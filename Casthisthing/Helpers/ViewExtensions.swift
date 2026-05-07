@@ -1,5 +1,7 @@
 import SwiftUI
 
+// MARK: - Decimal keyboard
+
 extension View {
     @ViewBuilder
     func decimalKeyboard() -> some View {
@@ -11,21 +13,19 @@ extension View {
     }
 }
 
-// MARK: - CapsuleButtonStyle
+// MARK: - Card style
 
-struct CapsuleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.subheadline.weight(.medium))
-            .foregroundStyle(AppTheme.textPrimary)
-            .padding(.horizontal, 28)
-            .padding(.vertical, 12)
-            .background(
-                ZStack {
-                    Capsule().fill(AppTheme.cardBg)
-                    Capsule().strokeBorder(AppTheme.borderDash, lineWidth: 1)
-                }
-            )
-            .opacity(configuration.isPressed ? 0.7 : 1)
+extension View {
+    /// Applica il background e il bordo standard delle card DS.
+    /// Usare per qualsiasi card con sfondo solido + bordo 1px.
+    func cardStyle(
+        radius: CGFloat = DS.Radius.xl,
+        fill: Color = DS.Color.general,
+        border: Color = DS.Color.borderGeneral,
+        lineWidth: CGFloat = 1
+    ) -> some View {
+        self
+            .background(RoundedRectangle(cornerRadius: radius).fill(fill))
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(border, lineWidth: lineWidth))
     }
 }

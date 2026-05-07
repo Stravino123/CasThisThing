@@ -10,6 +10,10 @@ enum DSIcon: String {
     case plus       = "ic_plus"
     case lock       = "ic_lock"
     case sparkle    = "ic_sparkle"
+    case dotsThree  = "ic_dots_three"
+    case candle     = "ic_candle"
+    case circle     = "ic_circle"
+    case coin       = "ic_coin"
 
     var image: Image { Image(rawValue) }
 }

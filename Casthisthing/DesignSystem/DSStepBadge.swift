@@ -1,6 +1,7 @@
 import SwiftUI
 
-// MARK: - Step state
+// MARK: - DSStepState
+// Canonical definition — usata da DSStepBadge, DSCardDataEntry, CastTabContent.
 
 enum DSStepState { case done, active, locked }
 

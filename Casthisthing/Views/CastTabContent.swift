@@ -16,7 +16,7 @@ struct CastTabContent: View {
         }
     }
 
-    private func stepState(_ step: Int) -> StepState {
+    private func stepState(_ step: Int) -> DSStepState {
         if session.currentStep > step || session.isComplete { return .done }
         if session.currentStep == step                       { return .active }
         return .locked

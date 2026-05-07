@@ -2,71 +2,76 @@ import SwiftUI
 
 // Single source of truth for all visual constants.
 // Use DS.* everywhere — never hardcode colors, radii or spacing in views.
+//
+// I colori sono dynamic (static var) e leggono ThemeStore.shared.current.
+// SwiftUI's @Observable tracking ri-renderizza i componenti automaticamente
+// quando l'utente cambia tema.
 
 enum DS {
 
     // MARK: - Colors
-    // Source: alias.json exported from Figma (Global + alias collections)
-    // Update here whenever aliases change in Figma.
 
     enum Color {
-        // Canvas — app background (← color1/200)
-        static let canvas          = SwiftUI.Color(hex: "#FFF5F7")
 
-        // Primary (← color1/1100)
-        static let primary         = SwiftUI.Color(hex: "#FF006E")
-        static let onPrimary       = SwiftUI.Color(hex: "#FFFFFF")  // ← color1/100
-        static let primaryLight    = SwiftUI.Color(hex: "#FFF5F7")  // ← color1/200
-        static let onPrimaryLight  = SwiftUI.Color(hex: "#BC004E")  // ← color1/1400
+        // Shortcut interno — evita di ripetere ThemeStore.shared.current ovunque
+        private static var premium: Bool { ThemeStore.shared.current == .premium }
 
-        // Secondary (← color4/700)
-        static let secondary       = SwiftUI.Color(hex: "#8FC1CB")
-        static let onSecondary     = SwiftUI.Color(hex: "#FFFFFF")  // ← color4/100
+        // ── Canvas / background ──────────────────────────────────────────────
+        static var canvas: SwiftUI.Color       { premium ? .init(hex: "#1B1B1B") : .init(hex: "#FFF5F7") }
 
-        // Borders
-        static let borderGeneral   = SwiftUI.Color(hex: "#FDDAE0")  // ← color1/400
-        static let borderDisabled  = SwiftUI.Color(hex: "#E2E2E2")  // ← neutral/400
-        static let borderDefault   = SwiftUI.Color(hex: "#D9D9D9")  // ← CardWork filled border
+        // ── Primary ──────────────────────────────────────────────────────────
+        static var primary: SwiftUI.Color      { premium ? .init(hex: "#F1F1F1") : .init(hex: "#FF006E") }
+        static var onPrimary: SwiftUI.Color    { premium ? .init(hex: "#262626") : .init(hex: "#FFFFFF") }
+        static var primaryLight: SwiftUI.Color { premium ? .init(hex: "#262626") : .init(hex: "#FFF5F7") }
+        static var onPrimaryLight: SwiftUI.Color { premium ? .init(hex: "#FFFFFF") : .init(hex: "#BC004E") }
 
-        // General / surface
-        static let general         = SwiftUI.Color(hex: "#FFFFFF")  // white
-        static let disabled        = SwiftUI.Color(hex: "#F8F8F8")  // ← neutral/200
-        static let onDisabled      = SwiftUI.Color(hex: "#B9B9B9")  // ← neutral/700
+        // ── Secondary ────────────────────────────────────────────────────────
+        static var secondary: SwiftUI.Color    { premium ? .init(hex: "#262626") : .init(hex: "#8FC1CB") }
+        static var onSecondary: SwiftUI.Color  { .init(hex: "#FFFFFF") }                // color4/100 — uguale in entrambi
 
-        // MARK: - Component semantics (usati dai componenti DS)
-        // Mappati sugli alias Figma — aggiornare quando gli alias cambiano
-        static let bg           = canvas
-        static let surface      = disabled
-        static let surfaceAlt   = SwiftUI.Color(hex: "#F1F1F1")
-        static let accent       = primary
-        static let accentDim    = primaryLight
-        static let text1        = SwiftUI.Color(hex: "#1B1B1B")     // near-black su canvas chiaro
-        static let text2        = text1.opacity(0.55)
-        static let text3        = text1.opacity(0.28)
-        static let text           = SwiftUI.Color(hex: "#1B1B1B") // ← neutral/2000
-        static let textSub        = SwiftUI.Color(hex: "#767676") // ← neutral/1200
-        static let borderPrimary  = primary                      // ← color1/1100
-        static let border1      = borderGeneral
-        static let border2      = borderGeneral.opacity(0.6)
-        static let border3      = borderGeneral.opacity(0.3)
-        static let stepDoneFill = primary
-        static let stepDoneText = onPrimary
-        static let tooltipBg    = SwiftUI.Color(hex: "#262626")  // ← neutral/1900
+        // ── Borders ──────────────────────────────────────────────────────────
+        static var borderGeneral: SwiftUI.Color  { premium ? .init(hex: "#B9B9B9") : .init(hex: "#FDDAE0") }
+        static var borderDisabled: SwiftUI.Color { premium ? .init(hex: "#474747") : .init(hex: "#E2E2E2") }
+        static var borderDefault: SwiftUI.Color  { premium ? .init(hex: "#474747") : .init(hex: "#D9D9D9") }
+
+        // ── Surface ──────────────────────────────────────────────────────────
+        static var general: SwiftUI.Color      { premium ? .init(hex: "#1B1B1B") : .init(hex: "#FFFFFF") }
+        static var disabled: SwiftUI.Color     { premium ? .init(hex: "#262626") : .init(hex: "#F8F8F8") }
+        static var onDisabled: SwiftUI.Color   { .init(hex: "#B9B9B9") }               // neutral/700 — uguale
+
+        // ── Text ─────────────────────────────────────────────────────────────
+        static var text: SwiftUI.Color         { premium ? .init(hex: "#FFFFFF") : .init(hex: "#1B1B1B") }
+        static var textSub: SwiftUI.Color      { premium ? .init(hex: "#9E9E9E") : .init(hex: "#767676") }
+        static var text1: SwiftUI.Color        { premium ? .init(hex: "#FFFFFF") : .init(hex: "#1B1B1B") }
+        static var text2: SwiftUI.Color        { text1.opacity(0.55) }
+        static var text3: SwiftUI.Color        { text1.opacity(0.28) }
+
+        // ── Component semantics ──────────────────────────────────────────────
+        static var bg: SwiftUI.Color           { canvas }
+        static var surface: SwiftUI.Color      { disabled }
+        static var surfaceAlt: SwiftUI.Color   { premium ? .init(hex: "#3B3B3B") : .init(hex: "#F1F1F1") }
+        static var accent: SwiftUI.Color       { primary }
+        static var accentDim: SwiftUI.Color    { primaryLight }
+        static var borderPrimary: SwiftUI.Color { primary }
+        static var border1: SwiftUI.Color      { borderGeneral }
+        static var border2: SwiftUI.Color      { borderGeneral.opacity(0.6) }
+        static var border3: SwiftUI.Color      { borderGeneral.opacity(0.3) }
+        static var stepDoneFill: SwiftUI.Color { primary }
+        static var stepDoneText: SwiftUI.Color { onPrimary }
+        static var tooltipBg: SwiftUI.Color    { premium ? .init(hex: "#3B3B3B") : .init(hex: "#262626") }
     }
 
     // MARK: - Typography
-    // Uses Excon Variable — registered at app launch via FontLoader in CasthisthingApp.swift
 
     enum Font {
-        static let logo    = excon(size: 14, weight: 700)   // bold monospaced feel
+        static let logo    = excon(size: 14, weight: 700)
         static let title   = excon(size: 20, weight: 700)
         static let body    = excon(size: 15, weight: 400)
         static let label   = excon(size: 13, weight: 500)
         static let caption = excon(size: 11, weight: 400)
-        static let mono    = SwiftUI.Font.system(size: 15).monospacedDigit() // keep mono digits
+        static let mono    = SwiftUI.Font.system(size: 15).monospacedDigit()
         static let monoSm  = SwiftUI.Font.system(size: 13).monospacedDigit()
 
-        /// Create an Excon font at any size and weight (100–900).
         static func excon(size: CGFloat, weight: Int = 400) -> SwiftUI.Font {
             .custom("Excon Variable", size: size)
                 .weight(fontWeight(weight))
@@ -90,21 +95,21 @@ enum DS {
     // MARK: - Spacing
 
     enum Space {
-        static let xs: CGFloat  = 4
-        static let sm: CGFloat  = 8
-        static let md: CGFloat  = 16
-        static let lg: CGFloat  = 24
-        static let xl: CGFloat  = 32
+        static let xs: CGFloat = 4
+        static let sm: CGFloat = 8
+        static let md: CGFloat = 16
+        static let lg: CGFloat = 24
+        static let xl: CGFloat = 32
     }
 
     // MARK: - Radii
 
     enum Radius {
-        static let sm: CGFloat  = 8
-        static let md: CGFloat  = 14
-        static let lg: CGFloat  = 20
+        static let sm: CGFloat   = 8
+        static let md: CGFloat   = 14
+        static let lg: CGFloat   = 20
         static let xl: CGFloat   = 28   // CardDataEntry, Tab
-        static let card: CGFloat = 56   // outer card (Container node 11:166)
+        static let card: CGFloat = 56   // outer card
         static let pill: CGFloat = 100
     }
 }

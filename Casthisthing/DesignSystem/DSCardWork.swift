@@ -1,24 +1,25 @@
 import SwiftUI
 
-/// CardWork — card per le lavorazioni nella tab "Pezzi"
+/// Contenuto possibile di una DSCardWork.
+enum DSCardWorkContent {
+    /// Lavorazione esistente: nome, badge opzionale (es. grammi), foto
+    case item(name: String, badge: String?, photoData: Data?)
+    /// Bottone aggiungi nuova lavorazione
+    case addNew
+}
+
+/// CardWork — card per le lavorazioni nella tab "Lavorazioni"
 /// Figma node 12:102 — 2 stati: Filled (lavorazione esistente) e Default (aggiungi)
 struct DSCardWork: View {
 
-    enum Content {
-        /// Lavorazione esistente
-        case item(name: String, price: String?, photoData: Data?)
-        /// Bottone aggiungi
-        case addNew
-    }
-
-    let content: Content
+    let content: DSCardWorkContent
     var onTap: () -> Void = {}
 
     var body: some View {
         Button(action: onTap) {
             switch content {
-            case let .item(name, price, photoData):
-                filledContent(name: name, price: price, photoData: photoData)
+            case let .item(name, badge, photoData):
+                filledContent(name: name, badge: badge, photoData: photoData)
             case .addNew:
                 addNewContent
             }
@@ -28,7 +29,7 @@ struct DSCardWork: View {
 
     // MARK: - Filled
 
-    private func filledContent(name: String, price: String?, photoData: Data?) -> some View {
+    private func filledContent(name: String, badge: String?, photoData: Data?) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top) {
                 // Avatar / thumbnail
@@ -51,9 +52,9 @@ struct DSCardWork: View {
 
                 Spacer()
 
-                // Price badge
-                if let price {
-                    Text(price)
+                // Badge (es. grammi argento)
+                if let badge {
+                    Text(badge)
                         .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(DS.Color.primary)
                         .padding(.horizontal, 7)
@@ -76,14 +77,7 @@ struct DSCardWork: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: DS.Radius.xl)
-                .fill(DS.Color.general)
-                .overlay(
-                    RoundedRectangle(cornerRadius: DS.Radius.xl)
-                        .stroke(DS.Color.borderDefault, lineWidth: 1)
-                )
-        )
+        .cardStyle(border: DS.Color.borderDefault)
     }
 
     // MARK: - Add New
@@ -116,8 +110,8 @@ struct DSCardWork: View {
 
 #Preview("CardWork") {
     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-        DSCardWork(content: .item(name: "Lavorazione 1", price: "2 €", photoData: nil))
-        DSCardWork(content: .item(name: "Lavorazione 2", price: "12 €", photoData: nil))
+        DSCardWork(content: .item(name: "Lavorazione 1", badge: "2.5 g", photoData: nil))
+        DSCardWork(content: .item(name: "Lavorazione 2", badge: nil,    photoData: nil))
         DSCardWork(content: .addNew)
     }
     .padding()
