@@ -107,28 +107,28 @@ struct CastResultView: View {
 
     private func ricavoCard(revenue: Double) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Ricavi")
+            Text("Margine per pezzo")
                 .font(DS.Font.excon(size: 12, weight: 500))
                 .foregroundStyle(DS.Color.textSub)
                 .tracking(-0.24)
                 .padding(.bottom, DS.Space.sm)
 
-            ForEach(session.lavorazioni.filter { $0.salePrice != nil }) { lav in
+            ForEach(session.lavorazioni.filter { $0.margin != nil }) { lav in
                 Divider().overlay(DS.Color.borderGeneral)
-                costRow(lav.label, Format.euros(lav.salePrice))
+                costRow(lav.label, Format.euros(lav.margin))
                     .padding(.vertical, DS.Space.sm)
             }
 
             Divider().overlay(DS.Color.borderGeneral)
 
             HStack {
-                Text("Ricavo totale")
+                Text("Margine totale")
                     .font(DS.Font.excon(size: 15, weight: 700))
                     .foregroundStyle(DS.Color.text)
                 Spacer()
                 Text(Format.euros(revenue))
                     .font(DS.Font.excon(size: 15, weight: 700))
-                    .foregroundStyle(DS.Color.primary)
+                    .foregroundStyle(revenue >= 0 ? DS.Color.primary : .red)
             }
             .padding(.top, DS.Space.sm)
         }

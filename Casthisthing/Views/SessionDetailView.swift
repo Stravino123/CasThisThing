@@ -150,7 +150,7 @@ struct SessionDetailView: View {
             }
             if let revenue = session.totalRevenue {
                 HStack {
-                    Text("Ricavo totale").fontWeight(.semibold)
+                    Text("Margine totale").fontWeight(.semibold)
                     Spacer()
                     Text(Format.euros(revenue)).fontWeight(.semibold)
                         .foregroundStyle(.green)

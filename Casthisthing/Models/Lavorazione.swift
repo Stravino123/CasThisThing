@@ -16,6 +16,13 @@ final class Lavorazione: Identifiable {
         self.session = session
     }
 
+    /// Margine netto: prezzo di vendita − costo di produzione.
+    /// Nil se manca il prezzo di vendita o il costo non è ancora calcolabile.
+    var margin: Double? {
+        guard let sp = salePrice, let c = cost else { return nil }
+        return sp - c
+    }
+
     // Returns nil when any required input is missing or total weight is zero.
     // Formula: (silverWeight / totalSilverWeight) × (silverCost + castingCost)
     var cost: Double? {

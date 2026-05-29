@@ -35,12 +35,12 @@ final class CastingSession: Identifiable {
         return sc + cc
     }
 
-    /// Somma dei prezzi di vendita delle lavorazioni che hanno un prezzo.
-    /// Ritorna nil se nessuna lavorazione ha un prezzo di vendita.
+    /// Somma dei margini (vendita − costo) delle lavorazioni che hanno entrambi i dati.
+    /// Ritorna nil se nessuna lavorazione ha un margine calcolabile.
     var totalRevenue: Double? {
-        let prices = lavorazioni.compactMap(\.salePrice)
-        guard !prices.isEmpty else { return nil }
-        return prices.reduce(0, +)
+        let margins = lavorazioni.compactMap(\.margin)
+        guard !margins.isEmpty else { return nil }
+        return margins.reduce(0, +)
     }
 
     // Drives field unlock logic in the UI (1–4).
