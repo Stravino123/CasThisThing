@@ -18,6 +18,9 @@ struct CastResultView: View {
                     if !session.lavorazioni.isEmpty {
                         pezziCard
                     }
+                    if let revenue = session.totalRevenue {
+                        ricavoCard(revenue: revenue)
+                    }
                 }
                 .padding(DS.Space.lg)
             }
@@ -100,6 +103,39 @@ struct CastResultView: View {
         .cardStyle()
     }
 
+    // MARK: - Ricavi
+
+    private func ricavoCard(revenue: Double) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("Ricavi")
+                .font(DS.Font.excon(size: 12, weight: 500))
+                .foregroundStyle(DS.Color.textSub)
+                .tracking(-0.24)
+                .padding(.bottom, DS.Space.sm)
+
+            ForEach(session.lavorazioni.filter { $0.salePrice != nil }) { lav in
+                Divider().overlay(DS.Color.borderGeneral)
+                costRow(lav.label, Format.euros(lav.salePrice))
+                    .padding(.vertical, DS.Space.sm)
+            }
+
+            Divider().overlay(DS.Color.borderGeneral)
+
+            HStack {
+                Text("Ricavo totale")
+                    .font(DS.Font.excon(size: 15, weight: 700))
+                    .foregroundStyle(DS.Color.text)
+                Spacer()
+                Text(Format.euros(revenue))
+                    .font(DS.Font.excon(size: 15, weight: 700))
+                    .foregroundStyle(DS.Color.primary)
+            }
+            .padding(.top, DS.Space.sm)
+        }
+        .padding(DS.Space.md)
+        .cardStyle()
+    }
+
     // MARK: - Helpers
 
     private func costRow(_ label: String, _ value: String) -> some View {
@@ -128,6 +164,7 @@ struct CastResultView: View {
 private struct LavResultRow: View {
     let lav: Lavorazione
     @State private var thumbnail: UIImage?
+    @State private var showLightbox = false
 
     var body: some View {
         HStack(alignment: .center, spacing: DS.Space.sm) {
@@ -138,6 +175,10 @@ private struct LavResultRow: View {
                     .scaledToFill()
                     .frame(width: 44, height: 44)
                     .clipShape(RoundedRectangle(cornerRadius: DS.Radius.sm))
+                    .onTapGesture { showLightbox = true }
+                    .fullScreenCover(isPresented: $showLightbox) {
+                        LightboxView(image: img)
+                    }
             } else {
                 RoundedRectangle(cornerRadius: DS.Radius.sm)
                     .fill(DS.Color.disabled)
@@ -171,5 +212,34 @@ private struct LavResultRow: View {
                 thumbnail = UIImage(data: data)
             }
         }
+    }
+}
+
+// MARK: - Lightbox
+
+private struct LightboxView: View {
+    let image: UIImage
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(DS.Space.md)
+
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(.white.opacity(0.8))
+                    .padding(DS.Space.lg)
+            }
+        }
+        .onTapGesture { dismiss() }
     }
 }

@@ -148,6 +148,14 @@ struct SessionDetailView: View {
                 Spacer()
                 Text(Format.euros(total)).fontWeight(.semibold)
             }
+            if let revenue = session.totalRevenue {
+                HStack {
+                    Text("Ricavo totale").fontWeight(.semibold)
+                    Spacer()
+                    Text(Format.euros(revenue)).fontWeight(.semibold)
+                        .foregroundStyle(.green)
+                }
+            }
         } header: {
             Text("Costo totale")
         }

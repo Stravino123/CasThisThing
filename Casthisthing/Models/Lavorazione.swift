@@ -6,6 +6,7 @@ final class Lavorazione: Identifiable {
     var id: UUID
     var label: String
     var silverWeight: Double?   // entered after picking up pieces — drives cost calc
+    var salePrice: Double?      // prezzo di vendita — opzionale
     @Attribute(.externalStorage) var photoData: Data?
     var session: CastingSession
 

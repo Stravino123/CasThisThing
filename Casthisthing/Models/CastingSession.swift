@@ -35,6 +35,14 @@ final class CastingSession: Identifiable {
         return sc + cc
     }
 
+    /// Somma dei prezzi di vendita delle lavorazioni che hanno un prezzo.
+    /// Ritorna nil se nessuna lavorazione ha un prezzo di vendita.
+    var totalRevenue: Double? {
+        let prices = lavorazioni.compactMap(\.salePrice)
+        guard !prices.isEmpty else { return nil }
+        return prices.reduce(0, +)
+    }
+
     // Drives field unlock logic in the UI (1–4).
     var currentStep: Int {
         if silverCost != nil   { return 4 }

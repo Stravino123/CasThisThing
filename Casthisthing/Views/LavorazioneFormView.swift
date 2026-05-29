@@ -12,10 +12,16 @@ struct LavorazioneFormView: View {
 
     @State private var label: String = ""
     @State private var silverWeightText: String = ""
+    @State private var salePriceText: String = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoImage: UIImage?
 
     private var isEditing: Bool { lavorazione != nil }
+
+    private var parsedSalePrice: Double? {
+        Format.decimal.number(from: salePriceText)?.doubleValue
+            ?? Double(salePriceText.replacingOccurrences(of: ",", with: "."))
+    }
 
     private var canSave: Bool {
         !label.trimmingCharacters(in: .whitespaces).isEmpty
@@ -66,6 +72,34 @@ struct LavorazioneFormView: View {
                     Text("Argento")
                 }
 
+                Section {
+                    HStack {
+                        Text("Prezzo di vendita")
+                        Spacer()
+                        TextField("—", text: $salePriceText)
+                            .decimalKeyboard()
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 80)
+                        Text("€").foregroundStyle(.secondary)
+                    }
+                    if let salePrice = parsedSalePrice,
+                       let cost = lavorazione?.cost {
+                        let margin = salePrice - cost
+                        HStack {
+                            Text("Margine")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                            Text(Format.euros(margin))
+                                .foregroundStyle(margin >= 0 ? .green : .red)
+                                .fontWeight(.semibold)
+                        }
+                    }
+                } header: {
+                    Text("Vendita")
+                } footer: {
+                    Text("Opzionale — inserisci il prezzo solo se hai già venduto il pezzo.")
+                }
+
                 if isEditing {
                     Section {
                         Button("Elimina lavorazione", role: .destructive) {
@@ -106,6 +140,9 @@ struct LavorazioneFormView: View {
         if let w = lav.silverWeight {
             silverWeightText = Format.grams.string(from: NSNumber(value: w)) ?? ""
         }
+        if let p = lav.salePrice {
+            salePriceText = Format.decimal.string(from: NSNumber(value: p)) ?? ""
+        }
         if let data = lav.photoData {
             photoImage = UIImage(data: data)
         }
@@ -118,14 +155,18 @@ struct LavorazioneFormView: View {
     private func save() {
         let silver = parseWeight(silverWeightText)
 
+        let salePrice = parsedSalePrice
+
         if let lav = lavorazione {
-            lav.label       = label.trimmingCharacters(in: .whitespaces)
+            lav.label        = label.trimmingCharacters(in: .whitespaces)
             lav.silverWeight = silver
-            lav.photoData   = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
+            lav.salePrice    = salePrice
+            lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
         } else {
             let lav = Lavorazione(label: label.trimmingCharacters(in: .whitespaces), session: session)
             lav.silverWeight = silver
-            lav.photoData   = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
+            lav.salePrice    = salePrice
+            lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
             context.insert(lav)
         }
         try? context.save()
