@@ -10,7 +10,6 @@ struct LavorazioneFormView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var context
 
-    @State private var label: String = ""
     @State private var silverWeightText: String = ""
     @State private var salePriceText: String = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -27,8 +26,7 @@ struct LavorazioneFormView: View {
     }
 
     private var canSave: Bool {
-        !label.trimmingCharacters(in: .whitespaces).isEmpty
-        && parseWeight(silverWeightText) != nil
+        parseWeight(silverWeightText) != nil
     }
 
     var body: some View {
@@ -55,12 +53,6 @@ struct LavorazioneFormView: View {
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                     }
-                }
-
-                Section {
-                    TextField("Nome (es. anello per mamma)", text: $label)
-                } header: {
-                    Text("Nome")
                 }
 
                 Section {
@@ -132,7 +124,7 @@ struct LavorazioneFormView: View {
                     }
                 }
             }
-            .navigationTitle(isEditing ? "Modifica lavorazione" : "Nuova lavorazione")
+            .navigationTitle(lavorazione?.displayName ?? "#\(session.lavorazioni.count + 1)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -192,7 +184,6 @@ struct LavorazioneFormView: View {
 
     private func populateFields() {
         guard let lav = lavorazione else { return }
-        label = lav.label
         if let w = lav.silverWeight {
             silverWeightText = Format.grams.string(from: NSNumber(value: w)) ?? ""
         }
@@ -214,12 +205,11 @@ struct LavorazioneFormView: View {
         let salePrice = parsedSalePrice
 
         if let lav = lavorazione {
-            lav.label        = label.trimmingCharacters(in: .whitespaces)
             lav.silverWeight = silver
             lav.salePrice    = salePrice
             lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
         } else {
-            let lav = Lavorazione(label: label.trimmingCharacters(in: .whitespaces), session: session)
+            let lav = Lavorazione(session: session)
             lav.silverWeight = silver
             lav.salePrice    = salePrice
             lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }

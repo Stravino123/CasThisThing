@@ -127,9 +127,22 @@ struct CastCardView: View {
                         .stroke(DS.Color.borderGeneral, lineWidth: 1)
                 )
         )
+        // Swipe verso sinistra → cast precedenti. Solo se il gesto è nettamente orizzontale,
+        // così non interferisce con lo scroll verticale delle card.
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 30)
+                .onEnded { value in
+                    let dx = value.translation.width
+                    let dy = value.translation.height
+                    if dx < -80 && abs(dx) > abs(dy) * 2 {
+                        showPreviousCasts = true
+                    }
+                }
+        )
         .sheet(isPresented: $showResults) {
             CastResultView(session: session)
-        }        .navigationDestination(isPresented: $showPreviousCasts) {
+        }
+        .navigationDestination(isPresented: $showPreviousCasts) {
             SessionsListView()
         }
     }

@@ -98,14 +98,15 @@ struct SessionDetailView: View {
 
     private var lavorazioniSection: some View {
         Section {
-            ForEach(session.lavorazioni) { lav in
+            ForEach(session.sortedLavorazioni) { lav in
                 Button { editingLavorazione = lav } label: {
                     LavorazioneRow(lav: lav, sessionComplete: session.isComplete)
                 }
                 .foregroundStyle(.primary)
             }
             .onDelete { offsets in
-                for i in offsets { context.delete(session.lavorazioni[i]) }
+                let sorted = session.sortedLavorazioni
+                for i in offsets { context.delete(sorted[i]) }
             }
 
             Button {
@@ -205,7 +206,7 @@ private struct LavorazioneRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(lav.label).font(.subheadline)
+                Text(lav.displayName).font(.subheadline)
                 if let w = lav.silverWeight {
                     Text(Format.grams(w))
                         .font(.caption)

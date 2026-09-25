@@ -93,7 +93,7 @@ struct CastResultView: View {
             }
             .padding(.bottom, DS.Space.sm)
 
-            ForEach(session.lavorazioni) { lav in
+            ForEach(session.sortedLavorazioni) { lav in
                 Divider().overlay(DS.Color.borderGeneral)
                 LavResultRow(lav: lav)
                     .padding(.vertical, DS.Space.sm)
@@ -113,9 +113,9 @@ struct CastResultView: View {
                 .tracking(-0.24)
                 .padding(.bottom, DS.Space.sm)
 
-            ForEach(session.lavorazioni.filter { $0.margin != nil }) { lav in
+            ForEach(session.sortedLavorazioni.filter { $0.margin != nil }) { lav in
                 Divider().overlay(DS.Color.borderGeneral)
-                costRow(lav.label, Format.euros(lav.margin))
+                costRow(lav.displayName, Format.euros(lav.margin))
                     .padding(.vertical, DS.Space.sm)
             }
 
@@ -190,7 +190,7 @@ private struct LavResultRow: View {
 
             // Label + peso
             VStack(alignment: .leading, spacing: 2) {
-                Text(lav.label)
+                Text(lav.displayName)
                     .font(DS.Font.label)
                     .foregroundStyle(DS.Color.text)
                 if let w = lav.silverWeight {

@@ -15,10 +15,10 @@ struct LavorazioniTabContent: View {
             columns: [GridItem(.flexible(), spacing: DS.Space.md), GridItem(.flexible())],
             spacing: DS.Space.md
         ) {
-            ForEach(session.lavorazioni) { lav in
+            ForEach(session.sortedLavorazioni) { lav in
                 DSCardWork(
                     content: .item(
-                        name: lav.label,
+                        name: lav.displayName,
                         badge: lav.silverWeight.map { Format.grams($0) },
                         photoData: lav.photoData
                     ),

@@ -20,6 +20,11 @@ final class CastingSession: Identifiable {
         self.date = date
     }
 
+    /// Ordine cronologico di creazione: determina la numerazione "#N".
+    var sortedLavorazioni: [Lavorazione] {
+        lavorazioni.sorted { ($0.createdAt ?? .distantPast) < ($1.createdAt ?? .distantPast) }
+    }
+
     // The sum is always derived; user never inputs a total.
     var totalSilverWeight: Double {
         lavorazioni.compactMap(\.silverWeight).reduce(0, +)

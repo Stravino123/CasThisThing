@@ -63,6 +63,21 @@ struct HomeView: View {
         .sheet(isPresented: $showCatalog) {
             ComponentCatalogView()
         }
+        .task { backfillLavorazioniDates() }
+    }
+
+    // Lavorazioni create prima della numerazione automatica non hanno createdAt:
+    // gliene assegniamo una una volta sola, così il loro numero resta stabile.
+    private func backfillLavorazioniDates() {
+        var changed = false
+        for session in sessions {
+            let undated = session.lavorazioni.filter { $0.createdAt == nil }
+            for (i, lav) in undated.enumerated() {
+                lav.createdAt = session.date.addingTimeInterval(Double(i))
+                changed = true
+            }
+        }
+        if changed { try? context.save() }
     }
 
     private func addSession() {
