@@ -158,9 +158,11 @@ struct LavorazioneFormView: View {
 
     private var photoUploadArea: some View {
         VStack(spacing: DS.Space.md) {
-            DSIcon.sparkle.view(size: 28, color: DS.Color.primary)
             PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                Label("Carica foto", systemImage: "photo.badge.plus")
+                HStack(spacing: DS.Space.sm) {
+                    DSIcon.sparkle.view(size: 20, color: DS.Color.onPrimary)
+                    Text("Carica foto")
+                }
             }
             .buttonStyle(DSButtonStyle(.primary, size: .sm))
             .frame(width: 180)
