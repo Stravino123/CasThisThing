@@ -42,17 +42,18 @@ struct LavorazioneFormView: View {
                             .frame(maxWidth: .infinity, maxHeight: 200)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .clipped()
-                    }
-                    PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
-                        Label(photoImage == nil ? "Aggiungi foto" : "Cambia foto",
-                              systemImage: photoImage == nil ? "photo.badge.plus" : "photo")
-                    }
-                    if photoImage != nil {
+                        PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                            Label("Cambia foto", systemImage: "photo")
+                        }
                         Button("Rimuovi foto", role: .destructive) {
                             photoImage = nil
                             selectedPhotoItem = nil
                             weightScan = .idle
                         }
+                    } else {
+                        photoUploadArea
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
                     }
                 }
 
@@ -153,6 +154,29 @@ struct LavorazioneFormView: View {
                 }
             }
         }
+    }
+
+    private var photoUploadArea: some View {
+        VStack(spacing: DS.Space.md) {
+            DSIcon.sparkle.view(size: 28, color: DS.Color.primary)
+            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                Label("Carica foto", systemImage: "photo.badge.plus")
+            }
+            .buttonStyle(DSButtonStyle(.primary, size: .sm))
+            .frame(width: 180)
+            Text("Fotografa il pezzo sulla bilancia: l'AI leggerà il peso dal display e lo inserirà per te.")
+                .font(DS.Font.excon(size: 12, weight: 500))
+                .foregroundStyle(DS.Color.textSub)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, DS.Space.lg)
+        }
+        .frame(maxWidth: .infinity, minHeight: 220)
+        .background(RoundedRectangle(cornerRadius: DS.Radius.xl).fill(DS.Color.general))
+        .overlay(
+            RoundedRectangle(cornerRadius: DS.Radius.xl)
+                .stroke(style: StrokeStyle(lineWidth: 1, dash: [6, 4]))
+                .foregroundStyle(DS.Color.primary)
+        )
     }
 
     private func populateFields() {
