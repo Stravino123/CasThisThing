@@ -1,74 +1,110 @@
 import UIKit
-import Vision
 
-/// Legge il peso dal display di una bilancia fotografata, on-device con Apple Vision.
+enum ScaleReading: Equatable {
+    case weight(Double)
+    case notFound
+    case missingKey
+    case failed(String)
+}
+
+/// Legge il peso dal display di una bilancia fotografata tramite Gemini.
+/// Apple Vision è stato scartato: non riconosce i display LCD a segmenti.
 enum ScaleReader {
+    static let model = "gemini-3.8-flash"
 
-    static func readWeight(from image: UIImage) async -> Double? {
-        guard let cgImage = image.cgImage else { return nil }
-        let orientation = CGImagePropertyOrientation(image.imageOrientation)
+    private static let prompt = """
+    This photo shows a jewelry piece on a digital scale. Read the weight shown on the \
+    scale's display (often a seven-segment LCD, possibly backlit, angled or with glare). \
+    Pay close attention to the decimal point: "2.59" and "259" are very different. \
+    Return the weight in grams; if the display shows another unit (ct, oz, dwt) convert it to grams. \
+    Ignore any printed labels on the scale body such as capacity or precision. \
+    If you cannot read the display with confidence, return null.
+    """
 
-        return await Task.detached(priority: .userInitiated) {
-            let request = VNRecognizeTextRequest()
-            request.recognitionLevel = .accurate
-            request.usesLanguageCorrection = false
-
-            let handler = VNImageRequestHandler(cgImage: cgImage, orientation: orientation)
-            guard (try? handler.perform([request])) != nil,
-                  let observations = request.results else { return nil }
-
-            return bestCandidate(in: observations)
-        }.value
-    }
-
-    private struct Candidate {
-        let value: Double
-        let score: Double
-    }
-
-    private static let numberPattern = /(\d{1,4})(?:\s?[.,]\s?(\d{1,3}))?\s*(g|gr)?/
-
-    private static func bestCandidate(in observations: [VNRecognizedTextObservation]) -> Double? {
-        var candidates: [Candidate] = []
-
-        for obs in observations {
-            // Le cifre del display sono in genere il testo più grande nella foto.
-            let height = Double(obs.boundingBox.height)
-            for text in obs.topCandidates(3) {
-                let cleaned = text.string
-                    .replacingOccurrences(of: "O", with: "0")
-                    .replacingOccurrences(of: "o", with: "0")
-                for match in cleaned.matches(of: numberPattern) {
-                    let intPart = String(match.output.1)
-                    let fracPart = match.output.2.map(String.init)
-                    let raw = fracPart.map { "\(intPart).\($0)" } ?? intPart
-                    guard let value = Double(raw), value > 0, value < 5000 else { continue }
-
-                    // La dimensione domina: diciture piccole come "Max 500g" o "d=0.01g" non devono vincere.
-                    var score = height * 100 + Double(text.confidence)
-                    if fracPart != nil { score += 1 }
-                    if match.output.3 != nil { score += 0.5 }
-                    candidates.append(Candidate(value: value, score: score))
-                }
-            }
+    static func readWeight(from image: UIImage) async -> ScaleReading {
+        guard let key = KeychainStore.geminiKey, !key.isEmpty else { return .missingKey }
+        guard let jpeg = image.downscaled(maxSide: 1600).jpegData(compressionQuality: 0.8) else {
+            return .notFound
         }
 
-        return candidates.max(by: { $0.score < $1.score })?.value
+        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent")!
+        var request = URLRequest(url: url, timeoutInterval: 30)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(key, forHTTPHeaderField: "x-goog-api-key")
+
+        let body: [String: Any] = [
+            "contents": [[
+                "parts": [
+                    ["inline_data": ["mime_type": "image/jpeg", "data": jpeg.base64EncodedString()]],
+                    ["text": prompt],
+                ],
+            ]],
+            "generationConfig": [
+                "temperature": 0,
+                "response_mime_type": "application/json",
+                "response_schema": [
+                    "type": "OBJECT",
+                    "properties": ["weight_grams": ["type": "NUMBER", "nullable": true]],
+                    "required": ["weight_grams"],
+                ],
+            ],
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            guard status == 200 else { return .failed(message(for: status, data: data)) }
+            return parse(data)
+        } catch {
+            return .failed("Connessione non riuscita. Controlla di essere online.")
+        }
+    }
+
+    private struct GeminiResponse: Decodable {
+        struct Candidate: Decodable { let content: Content? }
+        struct Content: Decodable { let parts: [Part]? }
+        struct Part: Decodable { let text: String? }
+        let candidates: [Candidate]?
+    }
+
+    private struct WeightPayload: Decodable {
+        let weight_grams: Double?
+    }
+
+    private static func parse(_ data: Data) -> ScaleReading {
+        guard let response = try? JSONDecoder().decode(GeminiResponse.self, from: data),
+              let text = response.candidates?.first?.content?.parts?.compactMap(\.text).joined(),
+              let payload = try? JSONDecoder().decode(WeightPayload.self, from: Data(text.utf8)),
+              let grams = payload.weight_grams, grams > 0, grams < 5000
+        else { return .notFound }
+        return .weight(grams)
+    }
+
+    private static func message(for status: Int, data: Data) -> String {
+        let body = String(data: data, encoding: .utf8) ?? ""
+        switch status {
+        case 400 where body.contains("API_KEY_INVALID"):
+            return "La chiave Gemini non è valida. Controllala dal menu ⋯ → Chiave AI."
+        case 429:
+            return "Limite gratuito di Gemini raggiunto. Riprova più tardi."
+        case 403:
+            return "La chiave non ha accesso a Gemini."
+        case 404:
+            return "Il modello Gemini non è disponibile."
+        default:
+            return "Errore di Gemini (\(status))."
+        }
     }
 }
 
-private extension CGImagePropertyOrientation {
-    init(_ o: UIImage.Orientation) {
-        switch o {
-        case .up:            self = .up
-        case .down:          self = .down
-        case .left:          self = .left
-        case .right:         self = .right
-        case .upMirrored:    self = .upMirrored
-        case .downMirrored:  self = .downMirrored
-        case .leftMirrored:  self = .leftMirrored
-        case .rightMirrored: self = .rightMirrored
-        @unknown default:    self = .up
-        }
+private extension UIImage {
+    func downscaled(maxSide: CGFloat) -> UIImage {
+        let longest = max(size.width, size.height)
+        guard longest > maxSide else { return self }
+        let scale = maxSide / longest
+        let target = CGSize(width: size.width * scale, height: size.height * scale)
+        return UIGraphicsImageRenderer(size: target).image { _ in draw(in: CGRect(origin: .zero, size: target)) }
     }
 }

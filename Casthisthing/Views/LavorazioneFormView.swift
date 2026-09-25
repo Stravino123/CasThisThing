@@ -16,8 +16,9 @@ struct LavorazioneFormView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoImage: UIImage?
     @State private var weightScan: WeightScan = .idle
+    @State private var showAIKeySettings = false
 
-    private enum WeightScan { case idle, reading, found, notFound }
+    private enum WeightScan: Equatable { case idle, reading, done(ScaleReading) }
 
     private var isEditing: Bool { lavorazione != nil }
 
@@ -80,10 +81,22 @@ struct LavorazioneFormView: View {
                     Text("Argento")
                 } footer: {
                     switch weightScan {
-                    case .idle:     EmptyView()
-                    case .reading:  Text("Leggo il peso dalla foto…")
-                    case .found:    Text("Peso letto dalla foto della bilancia — controlla che sia corretto.")
-                    case .notFound: Text("Non sono riuscito a leggere il peso dalla foto. Inseriscilo a mano.")
+                    case .idle:
+                        EmptyView()
+                    case .reading:
+                        Text("Leggo il peso dalla foto…")
+                    case .done(.weight):
+                        Text("Peso letto dalla foto della bilancia — controlla che sia corretto.")
+                    case .done(.notFound):
+                        Text("Non sono riuscito a leggere il peso dalla foto. Inseriscilo a mano.")
+                    case .done(.missingKey):
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Per leggere il peso dalla foto serve la chiave Gemini.")
+                            Button("Inserisci chiave AI") { showAIKeySettings = true }
+                                .font(.footnote.weight(.semibold))
+                        }
+                    case .done(.failed(let message)):
+                        Text(message)
                     }
                 }
 
@@ -144,16 +157,25 @@ struct LavorazioneFormView: View {
                     guard let data = try? await newItem.loadTransferable(type: Data.self),
                           let img = UIImage(data: data) else { return }
                     photoImage = img
-                    weightScan = .reading
-                    if let w = await ScaleReader.readWeight(from: img) {
-                        silverWeightText = Format.grams.string(from: NSNumber(value: w)) ?? ""
-                        weightScan = .found
-                    } else {
-                        weightScan = .notFound
-                    }
+                    await readWeight(from: img)
                 }
             }
+            .sheet(isPresented: $showAIKeySettings, onDismiss: {
+                guard weightScan == .done(.missingKey), let img = photoImage else { return }
+                Task { await readWeight(from: img) }
+            }) {
+                AIKeySettingsView()
+            }
         }
+    }
+
+    private func readWeight(from img: UIImage) async {
+        weightScan = .reading
+        let result = await ScaleReader.readWeight(from: img)
+        if case .weight(let w) = result {
+            silverWeightText = Format.grams.string(from: NSNumber(value: w)) ?? ""
+        }
+        weightScan = .done(result)
     }
 
     private var photoUploadArea: some View {
