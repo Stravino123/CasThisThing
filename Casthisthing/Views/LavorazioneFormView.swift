@@ -16,7 +16,6 @@ struct LavorazioneFormView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoImage: UIImage?
     @State private var weightScan: WeightScan = .idle
-    @State private var showAIKeySettings = false
 
     private enum WeightScan: Equatable { case idle, reading, done(ScaleReading) }
 
@@ -89,12 +88,6 @@ struct LavorazioneFormView: View {
                         Text("Peso letto dalla foto della bilancia — controlla che sia corretto.")
                     case .done(.notFound):
                         Text("Non sono riuscito a leggere il peso dalla foto. Inseriscilo a mano.")
-                    case .done(.missingKey):
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Per leggere il peso dalla foto serve la chiave Gemini.")
-                            Button("Inserisci chiave AI") { showAIKeySettings = true }
-                                .font(.footnote.weight(.semibold))
-                        }
                     case .done(.failed(let message)):
                         Text(message)
                     }
@@ -159,12 +152,6 @@ struct LavorazioneFormView: View {
                     photoImage = img
                     await readWeight(from: img)
                 }
-            }
-            .sheet(isPresented: $showAIKeySettings, onDismiss: {
-                guard weightScan == .done(.missingKey), let img = photoImage else { return }
-                Task { await readWeight(from: img) }
-            }) {
-                AIKeySettingsView()
             }
         }
     }

@@ -13,7 +13,6 @@ struct CastCardView: View {
     @State private var showTooltip = false
     @State private var showResults = false
     @State private var showPreviousCasts = false
-    @State private var showAIKeySettings = false
 
     private var castComplete:   Bool { session.isComplete }
     private var hasLavorazioni: Bool { !session.lavorazioni.isEmpty }
@@ -44,9 +43,6 @@ struct CastCardView: View {
                         } label: {
                             let other = ThemeStore.shared.current == .magenta ? AppTheme.premium : .magenta
                             Label("Tema \(other.rawValue)", systemImage: other.icon)
-                        }
-                        Button { showAIKeySettings = true } label: {
-                            Label("Chiave AI", systemImage: "key")
                         }
                         Divider()
                         Button { resetAll() } label: {
@@ -133,11 +129,7 @@ struct CastCardView: View {
         )
         .sheet(isPresented: $showResults) {
             CastResultView(session: session)
-        }
-        .sheet(isPresented: $showAIKeySettings) {
-            AIKeySettingsView()
-        }
-        .navigationDestination(isPresented: $showPreviousCasts) {
+        }        .navigationDestination(isPresented: $showPreviousCasts) {
             SessionsListView()
         }
     }

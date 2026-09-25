@@ -3,7 +3,6 @@ import UIKit
 enum ScaleReading: Equatable {
     case weight(Double)
     case notFound
-    case missingKey
     case failed(String)
 }
 
@@ -22,7 +21,6 @@ enum ScaleReader {
     """
 
     static func readWeight(from image: UIImage) async -> ScaleReading {
-        guard let key = KeychainStore.geminiKey, !key.isEmpty else { return .missingKey }
         guard let jpeg = image.downscaled(maxSide: 1600).jpegData(compressionQuality: 0.8) else {
             return .notFound
         }
@@ -31,7 +29,7 @@ enum ScaleReader {
         var request = URLRequest(url: url, timeoutInterval: 30)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(key, forHTTPHeaderField: "x-goog-api-key")
+        request.setValue(Secrets.geminiAPIKey, forHTTPHeaderField: "x-goog-api-key")
 
         let body: [String: Any] = [
             "contents": [[
@@ -86,7 +84,7 @@ enum ScaleReader {
         let body = String(data: data, encoding: .utf8) ?? ""
         switch status {
         case 400 where body.contains("API_KEY_INVALID"):
-            return "La chiave Gemini non è valida. Controllala dal menu ⋯ → Chiave AI."
+            return "La chiave Gemini non è valida."
         case 429:
             return "Limite gratuito di Gemini raggiunto. Riprova più tardi."
         case 403:
