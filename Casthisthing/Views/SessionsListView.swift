@@ -51,15 +51,19 @@ struct SessionsListView: View {
                     }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
+                    // bottom + top della prima card cast (xs) = 24pt di distanza
                     .listRowInsets(EdgeInsets(
                         top: DS.Space.sm,
                         leading: DS.Space.md,
-                        bottom: DS.Space.sm,
+                        bottom: DS.Space.lg - DS.Space.xs,
                         trailing: DS.Space.md
                     ))
 
                     ForEach(completed) { session in
-                        NavigationLink(destination: SessionDetailView(session: session)) {
+                        // NavigationLink invisibile dietro la card: nella List evita il chevron di sistema.
+                        ZStack {
+                            NavigationLink(destination: SessionDetailView(session: session)) { EmptyView() }
+                                .opacity(0)
                             DSCardSession(
                                 title: session.title,
                                 date: session.date,
