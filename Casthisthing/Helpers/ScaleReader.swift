@@ -9,7 +9,10 @@ enum ScaleReading: Equatable {
 /// Legge il peso dal display di una bilancia fotografata tramite Gemini.
 /// Apple Vision è stato scartato: non riconosce i display LCD a segmenti.
 enum ScaleReader {
-    static let model = "gemini-3.8-flash"
+    // In ordine di preferenza: se uno è sovraccarico (503) o fuori quota, si passa al successivo.
+    static let models = ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
+
+    private static let retryableStatuses: Set<Int> = [404, 429, 500, 503, 504]
 
     private static let prompt = """
     This photo shows a jewelry piece on a digital scale. Read the weight shown on the \
@@ -24,12 +27,6 @@ enum ScaleReader {
         guard let jpeg = image.downscaled(maxSide: 1600).jpegData(compressionQuality: 0.8) else {
             return .notFound
         }
-
-        let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent")!
-        var request = URLRequest(url: url, timeoutInterval: 30)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(Secrets.geminiAPIKey, forHTTPHeaderField: "x-goog-api-key")
 
         let body: [String: Any] = [
             "contents": [[
@@ -48,16 +45,36 @@ enum ScaleReader {
                 ],
             ],
         ]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        guard let httpBody = try? JSONSerialization.data(withJSONObject: body) else { return .notFound }
 
-        do {
-            let (data, response) = try await URLSession.shared.data(for: request)
-            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
-            guard status == 200 else { return .failed(message(for: status, data: data)) }
-            return parse(data)
-        } catch {
-            return .failed("Connessione non riuscita. Controlla di essere online.")
+        var lastStatus = 0
+        var lastData = Data()
+        for (index, model) in models.enumerated() {
+            let attempts = index == 0 ? 2 : 1
+            for attempt in 0..<attempts {
+                if attempt > 0 { try? await Task.sleep(for: .seconds(1.5)) }
+                let url = URL(string: "https://generativelanguage.googleapis.com/v1beta/models/\(model):generateContent")!
+                var request = URLRequest(url: url, timeoutInterval: 30)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                request.setValue(Secrets.geminiAPIKey, forHTTPHeaderField: "x-goog-api-key")
+                request.httpBody = httpBody
+
+                do {
+                    let (data, response) = try await URLSession.shared.data(for: request)
+                    let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+                    if status == 200 { return parse(data) }
+                    lastStatus = status
+                    lastData = data
+                    guard retryableStatuses.contains(status) else {
+                        return .failed(message(for: status, data: data))
+                    }
+                } catch {
+                    return .failed("Connessione non riuscita. Controlla di essere online.")
+                }
+            }
         }
+        return .failed(message(for: lastStatus, data: lastData))
     }
 
     private struct GeminiResponse: Decodable {
@@ -87,6 +104,8 @@ enum ScaleReader {
             return "La chiave Gemini non è valida."
         case 429:
             return "Limite gratuito di Gemini raggiunto. Riprova più tardi."
+        case 500, 503, 504:
+            return "Gemini è sovraccarico in questo momento. Ricarica la foto tra qualche minuto."
         case 403:
             return "La chiave non ha accesso a Gemini."
         case 404:
