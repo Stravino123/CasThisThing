@@ -19,12 +19,45 @@ struct SessionsListView: View {
         allSessions.filter { $0.isComplete }
     }
 
+    private var totalSpend: Double { completed.compactMap(\.totalCost).reduce(0, +) }
+    private var totalProfit: Double? {
+        let margins = completed.compactMap(\.totalRevenue)
+        return margins.isEmpty ? nil : margins.reduce(0, +)
+    }
+    private var soldCount: Int {
+        completed.reduce(0) { $0 + $1.lavorazioni.filter { $0.margin != nil }.count }
+    }
+
     var body: some View {
         Group {
             if completed.isEmpty {
                 emptyState
             } else {
                 List {
+                    HStack(spacing: DS.Space.md) {
+                        summaryCard(
+                            title: "Spesa totale",
+                            value: Format.euros(totalSpend),
+                            valueColor: DS.Color.text,
+                            caption: completed.count == 1 ? "1 cast completato" : "\(completed.count) cast completati"
+                        )
+                        summaryCard(
+                            title: "Guadagno",
+                            value: Format.euros(totalProfit),
+                            valueColor: totalProfit.map { $0 >= 0 ? .green : .red } ?? DS.Color.textSub,
+                            caption: soldCount == 0 ? "nessun pezzo venduto"
+                                : soldCount == 1 ? "1 pezzo venduto" : "\(soldCount) pezzi venduti"
+                        )
+                    }
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets(
+                        top: DS.Space.sm,
+                        leading: DS.Space.md,
+                        bottom: DS.Space.sm,
+                        trailing: DS.Space.md
+                    ))
+
                     ForEach(completed) { session in
                         NavigationLink(destination: SessionDetailView(session: session)) {
                             DSCardSession(
@@ -80,6 +113,31 @@ struct SessionsListView: View {
         }
 
         try? context.save()
+    }
+
+    // MARK: - Summary card
+
+    private func summaryCard(title: String, value: String, valueColor: Color, caption: String) -> some View {
+        VStack(alignment: .leading, spacing: DS.Space.xs) {
+            Text(title)
+                .font(DS.Font.excon(size: 12, weight: 500))
+                .foregroundStyle(DS.Color.textSub)
+                .tracking(-0.24)
+            Text(value)
+                .font(DS.Font.excon(size: 20, weight: 700).monospacedDigit())
+                .foregroundStyle(valueColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            Text(caption)
+                .font(DS.Font.excon(size: 11, weight: 500))
+                .foregroundStyle(DS.Color.textSub)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(DS.Space.md)
+        .background(RoundedRectangle(cornerRadius: DS.Radius.xl).fill(DS.Color.general))
+        .overlay(RoundedRectangle(cornerRadius: DS.Radius.xl).stroke(DS.Color.borderGeneral, lineWidth: 1))
     }
 
     // MARK: - Empty state
