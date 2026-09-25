@@ -15,6 +15,9 @@ struct LavorazioneFormView: View {
     @State private var salePriceText: String = ""
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var photoImage: UIImage?
+    @State private var weightScan: WeightScan = .idle
+
+    private enum WeightScan { case idle, reading, found, notFound }
 
     private var isEditing: Bool { lavorazione != nil }
 
@@ -48,6 +51,7 @@ struct LavorazioneFormView: View {
                         Button("Rimuovi foto", role: .destructive) {
                             photoImage = nil
                             selectedPhotoItem = nil
+                            weightScan = .idle
                         }
                     }
                 }
@@ -62,6 +66,9 @@ struct LavorazioneFormView: View {
                     HStack {
                         Text("Peso argento")
                         Spacer()
+                        if weightScan == .reading {
+                            ProgressView()
+                        }
                         TextField("0", text: $silverWeightText)
                             .decimalKeyboard()
                             .multilineTextAlignment(.trailing)
@@ -70,6 +77,13 @@ struct LavorazioneFormView: View {
                     }
                 } header: {
                     Text("Argento")
+                } footer: {
+                    switch weightScan {
+                    case .idle:     EmptyView()
+                    case .reading:  Text("Leggo il peso dalla foto…")
+                    case .found:    Text("Peso letto dalla foto della bilancia — controlla che sia corretto.")
+                    case .notFound: Text("Non sono riuscito a leggere il peso dalla foto. Inseriscilo a mano.")
+                    }
                 }
 
                 Section {
@@ -126,8 +140,15 @@ struct LavorazioneFormView: View {
             .onChange(of: selectedPhotoItem) {
                 guard let newItem = selectedPhotoItem else { return }
                 Task {
-                    if let data = try? await newItem.loadTransferable(type: Data.self) {
-                        photoImage = UIImage(data: data)
+                    guard let data = try? await newItem.loadTransferable(type: Data.self),
+                          let img = UIImage(data: data) else { return }
+                    photoImage = img
+                    weightScan = .reading
+                    if let w = await ScaleReader.readWeight(from: img) {
+                        silverWeightText = Format.grams.string(from: NSNumber(value: w)) ?? ""
+                        weightScan = .found
+                    } else {
+                        weightScan = .notFound
                     }
                 }
             }
