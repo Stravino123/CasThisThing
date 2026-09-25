@@ -41,7 +41,10 @@ struct HomeView: View {
                 let contentHeight = geo.size.height - 72
 
                 if let session = currentSession {
+                    // .id: ogni nuovo cast riparte con uno stato pulito
+                    // (altrimenti i campi degli step conservano il testo del cast precedente).
                     CastCardView(session: session)
+                        .id(session.id)
                         .padding(DS.Space.lg)
                         .frame(height: contentHeight)
                 } else {

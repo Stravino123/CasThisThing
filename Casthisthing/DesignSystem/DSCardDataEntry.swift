@@ -134,6 +134,7 @@ struct DSCardDataEntry: View {
             .foregroundStyle(DS.Color.primary))
         .contentShape(Rectangle())
         .onTapGesture {
+            text       = value.flatMap { Format.decimal.string(from: NSNumber(value: $0)) } ?? ""
             isExpanded = true
             focused    = true
         }
