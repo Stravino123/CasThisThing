@@ -30,6 +30,11 @@ final class CastingSession: Identifiable {
         lavorazioni.compactMap(\.silverWeight).reduce(0, +)
     }
 
+    /// Tutti i pezzi venduti — false se il cast non ha lavorazioni.
+    var allSold: Bool {
+        !lavorazioni.isEmpty && lavorazioni.allSatisfy(\.isSold)
+    }
+
     // Session is complete only once both cost fields are filled.
     var isComplete: Bool {
         silverCost != nil && castingCost != nil

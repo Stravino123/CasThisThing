@@ -12,3 +12,6 @@
 - [x] Lavorazioni con costo proporzionale al peso argento
 - [x] Foto per ogni lavorazione
 - [x] Rinomina app → Casthisthing
+- [x] Sezione "Spese e guadagni" (totali spostati da Cast precedenti + spese extra)
+- [x] Solo tema scuro (Premium), switch tema rimosso
+- [x] Conferma prima di "Ricomincia sessione"

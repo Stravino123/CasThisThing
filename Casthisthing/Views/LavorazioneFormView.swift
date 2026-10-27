@@ -110,7 +110,7 @@ struct LavorazioneFormView: View {
                 } header: {
                     Text("Vendita")
                 } footer: {
-                    Text("Opzionale — inserisci il prezzo solo se hai già venduto il pezzo.")
+                    Text("Opzionale — inserendo il prezzo la lavorazione viene segnata come venduta.")
                 }
 
                 if isEditing {
@@ -200,21 +200,14 @@ struct LavorazioneFormView: View {
     }
 
     private func save() {
-        let silver = parseWeight(silverWeightText)
-
-        let salePrice = parsedSalePrice
-
-        if let lav = lavorazione {
-            lav.silverWeight = silver
-            lav.salePrice    = salePrice
-            lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
-        } else {
-            let lav = Lavorazione(session: session)
-            lav.silverWeight = silver
-            lav.salePrice    = salePrice
-            lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
-            context.insert(lav)
-        }
+        let lav = lavorazione ?? {
+            let new = Lavorazione(session: session)
+            context.insert(new)
+            return new
+        }()
+        lav.silverWeight = parseWeight(silverWeightText)
+        lav.salePrice    = parsedSalePrice
+        lav.photoData    = photoImage.flatMap { $0.jpegData(compressionQuality: 0.8) }
         try? context.save()
         dismiss()
     }

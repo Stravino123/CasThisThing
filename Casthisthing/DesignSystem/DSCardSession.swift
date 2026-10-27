@@ -8,31 +8,40 @@ struct DSCardSession: View {
     let pieceCount: Int
     let totalSilverWeight: Double?
     let totalCost: Double?
+    /// true se il cast ha lavorazioni e sono state vendute tutte
+    var allSold: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DS.Space.md) {
+        HStack(alignment: .center, spacing: DS.Space.md) {
+            DSIcon.dropHalf.view(size: 24, color: DS.Color.textSub)
 
-            // ── Riga 1: titolo + data ──────────────────────────────────────
-            HStack(alignment: .firstTextBaseline) {
-                Text(title)
-                    .font(DS.Font.excon(size: 16, weight: 700))
-                    .foregroundStyle(DS.Color.text)
-                    .lineLimit(1)
-                Spacer()
-                Text(date.formatted(date: .abbreviated, time: .omitted))
-                    .font(DS.Font.caption)
-                    .foregroundStyle(DS.Color.textSub)
-            }
+            VStack(alignment: .leading, spacing: DS.Space.md) {
 
-            // ── Riga 2: pezzi + peso / costo totale ───────────────────────
-            HStack(alignment: .lastTextBaseline) {
-                Text(subtitle)
-                    .font(DS.Font.caption)
-                    .foregroundStyle(DS.Color.textSub)
-                Spacer()
-                Text(Format.euros(totalCost))
-                    .font(DS.Font.excon(size: 20, weight: 700).monospacedDigit())
-                    .foregroundStyle(DS.Color.primary)
+                // ── Riga 1: titolo + data ──────────────────────────────────────
+                HStack(alignment: .firstTextBaseline) {
+                    Text(title)
+                        .font(DS.Font.excon(size: 16, weight: 700))
+                        .foregroundStyle(DS.Color.text)
+                        .lineLimit(1)
+                    if allSold {
+                        DSSoldTag(isSold: true, label: "Tutto venduto")
+                    }
+                    Spacer()
+                    Text(date.formatted(date: .abbreviated, time: .omitted))
+                        .font(DS.Font.caption)
+                        .foregroundStyle(DS.Color.textSub)
+                }
+
+                // ── Riga 2: pezzi + peso / costo totale ───────────────────────
+                HStack(alignment: .lastTextBaseline) {
+                    Text(subtitle)
+                        .font(DS.Font.caption)
+                        .foregroundStyle(DS.Color.textSub)
+                    Spacer()
+                    Text(Format.euros(totalCost))
+                        .font(DS.Font.excon(size: 20, weight: 700).monospacedDigit())
+                        .foregroundStyle(DS.Color.primary)
+                }
             }
         }
         .padding(DS.Space.md)
@@ -60,7 +69,8 @@ struct DSCardSession: View {
             date: .now,
             pieceCount: 4,
             totalSilverWeight: 18.5,
-            totalCost: 142.30
+            totalCost: 142.30,
+            allSold: true
         )
         DSCardSession(
             title: "Cast natale — anelli",

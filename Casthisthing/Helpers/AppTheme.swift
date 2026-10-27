@@ -34,8 +34,9 @@ final class ThemeStore {
         }
     }
 
+    // Il tema Magenta non è più selezionabile: tutti partono in Premium,
+    // anche chi aveva salvato Magenta in UserDefaults.
     private init() {
-        let saved = UserDefaults.standard.string(forKey: "casthisthing.theme") ?? ""
-        current = AppTheme(rawValue: saved) ?? .magenta
+        current = .premium
     }
 }

@@ -2,8 +2,8 @@ import SwiftUI
 
 /// Contenuto possibile di una DSCardWork.
 enum DSCardWorkContent {
-    /// Lavorazione esistente: nome, badge opzionale (es. grammi), foto
-    case item(name: String, badge: String?, photoData: Data?)
+    /// Lavorazione esistente: nome, badge opzionale (es. grammi), foto, stato vendita
+    case item(name: String, badge: String?, photoData: Data?, isSold: Bool = false)
     /// Bottone aggiungi nuova lavorazione
     case addNew
 }
@@ -18,8 +18,8 @@ struct DSCardWork: View {
     var body: some View {
         Button(action: onTap) {
             switch content {
-            case let .item(name, badge, photoData):
-                filledContent(name: name, badge: badge, photoData: photoData)
+            case let .item(name, badge, photoData, isSold):
+                filledContent(name: name, badge: badge, photoData: photoData, isSold: isSold)
             case .addNew:
                 addNewContent
             }
@@ -29,7 +29,7 @@ struct DSCardWork: View {
 
     // MARK: - Filled
 
-    private func filledContent(name: String, badge: String?, photoData: Data?) -> some View {
+    private func filledContent(name: String, badge: String?, photoData: Data?, isSold: Bool) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .top) {
                 // Avatar / thumbnail
@@ -70,10 +70,13 @@ struct DSCardWork: View {
                 }
             }
 
-            Text(name)
-                .font(DS.Font.excon(size: 14, weight: 500))
-                .foregroundStyle(DS.Color.textSub)
-                .lineLimit(1)
+            VStack(alignment: .leading, spacing: DS.Space.sm) {
+                Text(name)
+                    .font(DS.Font.excon(size: 14, weight: 500))
+                    .foregroundStyle(DS.Color.textSub)
+                    .lineLimit(1)
+                DSSoldTag(isSold: isSold)
+            }
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -110,8 +113,8 @@ struct DSCardWork: View {
 
 #Preview("CardWork") {
     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-        DSCardWork(content: .item(name: "Lavorazione 1", badge: "2.5 g", photoData: nil))
-        DSCardWork(content: .item(name: "Lavorazione 2", badge: nil,    photoData: nil))
+        DSCardWork(content: .item(name: "#1", badge: "2.5 g", photoData: nil, isSold: true))
+        DSCardWork(content: .item(name: "#2", badge: nil,    photoData: nil))
         DSCardWork(content: .addNew)
     }
     .padding()

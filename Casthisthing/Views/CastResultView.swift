@@ -190,9 +190,12 @@ private struct LavResultRow: View {
 
             // Label + peso
             VStack(alignment: .leading, spacing: 2) {
-                Text(lav.displayName)
-                    .font(DS.Font.label)
-                    .foregroundStyle(DS.Color.text)
+                HStack(spacing: DS.Space.sm) {
+                    Text(lav.displayName)
+                        .font(DS.Font.label)
+                        .foregroundStyle(DS.Color.text)
+                    DSSoldTag(isSold: lav.isSold)
+                }
                 if let w = lav.silverWeight {
                     Text(Format.grams(w))
                         .font(DS.Font.caption)

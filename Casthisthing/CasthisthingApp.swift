@@ -19,8 +19,9 @@ struct CasthisthingApp: App {
                 HomeView()
             }
             .preferredColorScheme(themeStore.current.colorScheme)
+            .shakeEasterEgg()
         }
-        .modelContainer(for: [CastingSession.self, Lavorazione.self])
+        .modelContainer(for: [CastingSession.self, Lavorazione.self, SpesaExtra.self])
     }
 }
 

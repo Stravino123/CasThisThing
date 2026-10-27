@@ -1,2 +1,6 @@
 # Chiavi API — mai su git
 Casthisthing/Helpers/Secrets.swift
+
+# Impostazioni personali di Xcode e file di sistema macOS
+xcuserdata/
+.DS_Store

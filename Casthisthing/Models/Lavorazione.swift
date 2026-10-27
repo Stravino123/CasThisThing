@@ -8,7 +8,7 @@ final class Lavorazione: Identifiable {
     var label: String
     var createdAt: Date?        // nil solo per lavorazioni create prima della numerazione automatica
     var silverWeight: Double?   // entered after picking up pieces — drives cost calc
-    var salePrice: Double?      // prezzo di vendita — opzionale
+    var salePrice: Double?      // prezzo di vendita — opzionale; se presente il pezzo è venduto
     @Attribute(.externalStorage) var photoData: Data?
     var session: CastingSession
 
@@ -18,6 +18,8 @@ final class Lavorazione: Identifiable {
         self.createdAt = .now
         self.session = session
     }
+
+    var isSold: Bool { salePrice != nil }
 
     var displayName: String {
         let index = session.sortedLavorazioni.firstIndex { $0.id == id } ?? 0

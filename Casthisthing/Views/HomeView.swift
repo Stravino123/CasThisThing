@@ -70,7 +70,7 @@ struct HomeView: View {
     }
 
     // Lavorazioni create prima della numerazione automatica non hanno createdAt:
-    // gliene assegniamo una una volta sola, così il loro numero resta stabile.
+    // gliene assegniamo una una volta sola, così il loro numero "#N" resta stabile.
     private func backfillLavorazioniDates() {
         var changed = false
         for session in sessions {
@@ -95,7 +95,7 @@ struct HomeView: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: CastingSession.self, Lavorazione.self, configurations: config)
+    let container = try! ModelContainer(for: CastingSession.self, Lavorazione.self, SpesaExtra.self, configurations: config)
     let session = CastingSession(title: "Cast in corso", date: .now)
     session.waxWeight = 12.5
     container.mainContext.insert(session)

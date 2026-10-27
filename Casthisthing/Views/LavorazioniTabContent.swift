@@ -20,7 +20,8 @@ struct LavorazioniTabContent: View {
                     content: .item(
                         name: lav.displayName,
                         badge: lav.silverWeight.map { Format.grams($0) },
-                        photoData: lav.photoData
+                        photoData: lav.photoData,
+                        isSold: lav.isSold
                     ),
                     onTap: { editingLav = lav }
                 )

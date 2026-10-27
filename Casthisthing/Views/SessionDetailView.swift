@@ -206,7 +206,10 @@ private struct LavorazioneRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text(lav.displayName).font(.subheadline)
+                HStack(spacing: DS.Space.sm) {
+                    Text(lav.displayName).font(.subheadline)
+                    DSSoldTag(isSold: lav.isSold)
+                }
                 if let w = lav.silverWeight {
                     Text(Format.grams(w))
                         .font(.caption)

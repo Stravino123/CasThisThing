@@ -13,6 +13,8 @@ struct CastCardView: View {
     @State private var showTooltip = false
     @State private var showResults = false
     @State private var showPreviousCasts = false
+    @State private var showSpeseGuadagni = false
+    @State private var showResetConfirm = false
 
     private var castComplete:   Bool { session.isComplete }
     private var hasLavorazioni: Bool { !session.lavorazioni.isEmpty }
@@ -31,21 +33,15 @@ struct CastCardView: View {
                         .lineLimit(1)
                     Spacer()
                     Menu {
+                        Button { showSpeseGuadagni = true } label: {
+                            Label("Spese e guadagni", systemImage: "chart.bar")
+                        }
+                        Divider()
                         Button { showPreviousCasts = true } label: {
                             Label("Cast precedenti", systemImage: "clock")
                         }
                         Divider()
-                        Button {
-                            let other = ThemeStore.shared.current == .magenta ? AppTheme.premium : .magenta
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                ThemeStore.shared.current = other
-                            }
-                        } label: {
-                            let other = ThemeStore.shared.current == .magenta ? AppTheme.premium : .magenta
-                            Label("Tema \(other.rawValue)", systemImage: other.icon)
-                        }
-                        Divider()
-                        Button { resetAll() } label: {
+                        Button { showResetConfirm = true } label: {
                             Label("Ricomincia sessione", systemImage: "arrow.counterclockwise")
                         }
                     } label: {
@@ -144,6 +140,15 @@ struct CastCardView: View {
         }
         .navigationDestination(isPresented: $showPreviousCasts) {
             SessionsListView()
+        }
+        .navigationDestination(isPresented: $showSpeseGuadagni) {
+            SpeseGuadagniView()
+        }
+        .alert("Ricominciare la sessione?", isPresented: $showResetConfirm) {
+            Button("Annulla", role: .cancel) {}
+            Button("Ricomincia", role: .destructive) { resetAll() }
+        } message: {
+            Text("Tutti i dati del cast verranno azzerati e le lavorazioni eliminate, foto comprese. L'operazione non si può annullare.")
         }
     }
 
